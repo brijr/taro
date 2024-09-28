@@ -53,28 +53,65 @@ export default function NewPost({
   }
 
   if (!postType) {
-    return <div>Loading...</div>;
+    return <div className="text-center p-4">Loading...</div>;
   }
 
   return (
-    <form action={handleSubmit}>
-      <h1>New {postType.name}</h1>
-      <input name="title" placeholder="Title" required />
-      <input name="slug" placeholder="Slug" required />
+    <form action={handleSubmit} className="max-w-md mx-auto p-4 space-y-4">
+      <h1 className="text-2xl font-bold mb-4">New {postType.name}</h1>
+      <input
+        name="title"
+        placeholder="Title"
+        required
+        className="w-full p-2 border rounded"
+      />
+      <input
+        name="slug"
+        placeholder="Slug"
+        required
+        className="w-full p-2 border rounded"
+      />
 
       {fields.map((field) => (
-        <div key={field.id}>
-          <label>{field.name}</label>
-          {field.type === "text" && <input name={field.slug} type="text" />}
-          {field.type === "number" && <input name={field.slug} type="number" />}
-          {field.type === "boolean" && (
-            <input name={field.slug} type="checkbox" />
+        <div key={field.id} className="space-y-1">
+          <label className="block text-sm font-medium">{field.name}</label>
+          {field.type === "text" && (
+            <input
+              name={field.slug}
+              type="text"
+              className="w-full p-2 border rounded"
+            />
           )}
-          {field.type === "date" && <input name={field.slug} type="date" />}
+          {field.type === "number" && (
+            <input
+              name={field.slug}
+              type="number"
+              className="w-full p-2 border rounded"
+            />
+          )}
+          {field.type === "boolean" && (
+            <input
+              name={field.slug}
+              type="checkbox"
+              className="form-checkbox h-5 w-5"
+            />
+          )}
+          {field.type === "date" && (
+            <input
+              name={field.slug}
+              type="date"
+              className="w-full p-2 border rounded"
+            />
+          )}
         </div>
       ))}
 
-      <button type="submit">Create Post</button>
+      <button
+        type="submit"
+        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+      >
+        Create Post
+      </button>
     </form>
   );
 }

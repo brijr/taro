@@ -8,12 +8,12 @@ export default async function SitesPage({
   const sites = await getSites(parseInt(params.teamId));
 
   return (
-    <div>
-      <h1>Sites</h1>
-      <ul>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Sites</h1>
+      <ul className="space-y-2">
         {sites.map((site) => (
-          <li key={site.id}>
-            {site.name} - {site.domain}
+          <li key={site.id} className="bg-gray-100 p-2 rounded">
+            <span className="font-semibold">{site.name}</span> - {site.domain}
           </li>
         ))}
       </ul>

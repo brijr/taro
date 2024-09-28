@@ -11,36 +11,40 @@ export default async function PostTypePage({
   const posts = await getPosts(parseInt(params.postTypeId));
 
   if (!postType) {
-    return <div>Post Type not found</div>;
+    return <div className="text-red-500 text-center">Post Type not found</div>;
   }
 
   return (
-    <div>
-      <h1>{postType.name}</h1>
-      <p>Slug: {postType.slug}</p>
-      <h2>Fields:</h2>
-      <ul>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-2">{postType.name}</h1>
+      <p className="mb-4">Slug: {postType.slug}</p>
+      <h2 className="text-xl font-semibold mb-2">Fields:</h2>
+      <ul className="list-disc pl-5 mb-4">
         {postType.fields.map((field) => (
-          <li key={field.id}>
+          <li key={field.id} className="mb-1">
             {field.name} ({field.type})
           </li>
         ))}
       </ul>
-      <h2>Posts:</h2>
+      <h2 className="text-xl font-semibold mb-2">Posts:</h2>
       <Link
         href={`/sites/${params.siteId}/post-types/${postType.id}/posts/new`}
+        className="text-blue-500 hover:underline mb-4 inline-block"
       >
         Create New Post
       </Link>
-      <ul>
+      <ul className="list-disc pl-5">
         {posts.map((post) => (
-          <li key={post.id}>
+          <li key={post.id} className="mb-1">
             <Link
               href={`/sites/${params.siteId}/post-types/${postType.id}/posts/${post.id}`}
+              className="text-blue-500 hover:underline"
             >
               {post.title}
             </Link>
-            {post.isPublished ? " (Published)" : " (Draft)"}
+            <span className="ml-2 text-sm">
+              {post.isPublished ? "(Published)" : "(Draft)"}
+            </span>
           </li>
         ))}
       </ul>

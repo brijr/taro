@@ -59,46 +59,72 @@ export default function NewPostType({
   }
 
   return (
-    <form action={handleSubmit}>
-      <input name="name" placeholder="Post Type Name" required />
-      <input name="slug" placeholder="Slug" required />
-      <textarea name="description" placeholder="Description"></textarea>
+    <form action={handleSubmit} className="p-4 space-y-4">
+      <input
+        name="name"
+        placeholder="Post Type Name"
+        required
+        className="w-full p-2 border rounded"
+      />
+      <input
+        name="slug"
+        placeholder="Slug"
+        required
+        className="w-full p-2 border rounded"
+      />
+      <textarea
+        name="description"
+        placeholder="Description"
+        className="w-full p-2 border rounded"
+      ></textarea>
 
-      <h3>Fields</h3>
+      <h3 className="text-lg font-semibold">Fields</h3>
       {fields.map((field, index) => (
-        <div key={index}>
+        <div key={index} className="space-y-2">
           <input
             value={field.name}
             onChange={(e) => updateField(index, { name: e.target.value })}
             placeholder="Field Name"
             required
+            className="w-full p-2 border rounded"
           />
           <select
             value={field.type}
             onChange={(e) => updateField(index, { type: e.target.value })}
+            className="w-full p-2 border rounded"
           >
             <option value="text">Text</option>
             <option value="number">Number</option>
             <option value="boolean">Boolean</option>
             <option value="date">Date</option>
           </select>
-          <label>
+          <label className="flex items-center">
             <input
               type="checkbox"
               checked={field.isRequired}
               onChange={(e) =>
                 updateField(index, { isRequired: e.target.checked })
               }
+              className="mr-2"
             />
             Required
           </label>
         </div>
       ))}
-      <button type="button" onClick={addField}>
+      <button
+        type="button"
+        onClick={addField}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
         Add Field
       </button>
 
-      <button type="submit">Create Post Type</button>
+      <button
+        type="submit"
+        className="bg-green-500 text-white px-4 py-2 rounded"
+      >
+        Create Post Type
+      </button>
     </form>
   );
 }
