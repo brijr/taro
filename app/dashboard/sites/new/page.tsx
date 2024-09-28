@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSite } from "@/lib/actions/sites";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function NewSite() {
   const router = useRouter();
@@ -20,32 +22,40 @@ export default function NewSite() {
   }
 
   return (
-    <div>
-      <h1>Create New Site</h1>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold mb-6">Create New Site</h1>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Site Name</label>
-          <input
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Site Name
+          </label>
+          <Input
             id="name"
             name="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            className="mt-1"
           />
         </div>
-        <div>
-          <label htmlFor="domain">Domain</label>
-          <input
+        <div className="mb-4">
+          <label htmlFor="domain" className="block text-sm font-medium text-gray-700">
+            Domain
+          </label>
+          <Input
             id="domain"
             name="domain"
             type="text"
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
             required
+            className="mt-1"
           />
         </div>
-        <button type="submit">Create Site</button>
+        <Button type="submit" className="w-full">
+          Create Site
+        </Button>
       </form>
     </div>
   );
