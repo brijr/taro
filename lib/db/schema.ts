@@ -193,7 +193,7 @@ export const postTypes = pgTable(
   },
   (table) => {
     return {
-      slugIdx: uniqueIndex("slug_idx").on(table.siteId, table.slug),
+      slugIdx: uniqueIndex("post_type_slug_idx").on(table.siteId, table.slug),
     };
   }
 );
@@ -219,7 +219,7 @@ export const posts = pgTable(
   },
   (table) => {
     return {
-      slugIdx: uniqueIndex("slug_idx").on(table.postTypeId, table.slug),
+      slugIdx: uniqueIndex("post_slug_idx").on(table.postTypeId, table.slug),
     };
   }
 );
