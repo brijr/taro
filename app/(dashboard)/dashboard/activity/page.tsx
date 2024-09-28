@@ -8,7 +8,7 @@ import {
   UserCog,
   Users,
   UserCog2,
-  UserPlus2,
+  UserMinus,
   CheckSquare,
   Layout,
   FileText,
