@@ -15,6 +15,13 @@
       "when": 1727501231155,
       "tag": "0001_dear_leopardon",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1727501922007,
+      "tag": "0002_large_brood",
+      "breakpoints": true
     }
   ]
 }
