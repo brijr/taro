@@ -71,90 +71,6 @@ export const invitations = pgTable("invitations", {
   status: varchar("status", { length: 20 }).notNull().default("pending"),
 });
 
-export const teamsRelations = relations(teams, ({ many }) => ({
-  teamMembers: many(teamMembers),
-  activityLogs: many(activityLogs),
-  invitations: many(invitations),
-}));
-
-export const usersRelations = relations(users, ({ many }) => ({
-  teamMembers: many(teamMembers),
-  invitationsSent: many(invitations),
-}));
-
-export const invitationsRelations = relations(invitations, ({ one }) => ({
-  team: one(teams, {
-    fields: [invitations.teamId],
-    references: [teams.id],
-  }),
-  invitedBy: one(users, {
-    fields: [invitations.invitedBy],
-    references: [users.id],
-  }),
-}));
-
-export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
-  user: one(users, {
-    fields: [teamMembers.userId],
-    references: [users.id],
-  }),
-  team: one(teams, {
-    fields: [teamMembers.teamId],
-    references: [teams.id],
-  }),
-}));
-
-export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
-  team: one(teams, {
-    fields: [activityLogs.teamId],
-    references: [teams.id],
-  }),
-  user: one(users, {
-    fields: [activityLogs.userId],
-    references: [users.id],
-  }),
-}));
-
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
-export type Team = typeof teams.$inferSelect;
-export type NewTeam = typeof teams.$inferInsert;
-export type TeamMember = typeof teamMembers.$inferSelect;
-export type NewTeamMember = typeof teamMembers.$inferInsert;
-export type ActivityLog = typeof activityLogs.$inferSelect;
-export type NewActivityLog = typeof activityLogs.$inferInsert;
-export type Invitation = typeof invitations.$inferSelect;
-export type NewInvitation = typeof invitations.$inferInsert;
-export type TeamDataWithMembers = Team & {
-  teamMembers: (TeamMember & {
-    user: Pick<User, "id" | "name" | "email">;
-  })[];
-};
-
-export enum ActivityType {
-  SIGN_UP = "SIGN_UP",
-  SIGN_IN = "SIGN_IN",
-  SIGN_OUT = "SIGN_OUT",
-  UPDATE_PASSWORD = "UPDATE_PASSWORD",
-  DELETE_ACCOUNT = "DELETE_ACCOUNT",
-  UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
-  CREATE_TEAM = "CREATE_TEAM",
-  REMOVE_TEAM_MEMBER = "REMOVE_TEAM_MEMBER",
-  INVITE_TEAM_MEMBER = "INVITE_TEAM_MEMBER",
-  ACCEPT_INVITATION = "ACCEPT_INVITATION",
-  CREATE_SITE = "CREATE_SITE",
-  UPDATE_SITE = "UPDATE_SITE",
-  DELETE_SITE = "DELETE_SITE",
-  CREATE_POST_TYPE = "CREATE_POST_TYPE",
-  UPDATE_POST_TYPE = "UPDATE_POST_TYPE",
-  DELETE_POST_TYPE = "DELETE_POST_TYPE",
-  CREATE_POST = "CREATE_POST",
-  UPDATE_POST = "UPDATE_POST",
-  DELETE_POST = "DELETE_POST",
-  UPLOAD_MEDIA = "UPLOAD_MEDIA",
-  DELETE_MEDIA = "DELETE_MEDIA",
-}
-
 export const sites = pgTable(
   "sites",
   {
@@ -262,6 +178,51 @@ export const fields = pgTable(
   }
 );
 
+// Relations
+export const teamsRelations = relations(teams, ({ many }) => ({
+  teamMembers: many(teamMembers),
+  activityLogs: many(activityLogs),
+  invitations: many(invitations),
+}));
+
+export const usersRelations = relations(users, ({ many }) => ({
+  teamMembers: many(teamMembers),
+  invitationsSent: many(invitations),
+}));
+
+export const invitationsRelations = relations(invitations, ({ one }) => ({
+  team: one(teams, {
+    fields: [invitations.teamId],
+    references: [teams.id],
+  }),
+  invitedBy: one(users, {
+    fields: [invitations.invitedBy],
+    references: [users.id],
+  }),
+}));
+
+export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
+  user: one(users, {
+    fields: [teamMembers.userId],
+    references: [users.id],
+  }),
+  team: one(teams, {
+    fields: [teamMembers.teamId],
+    references: [teams.id],
+  }),
+}));
+
+export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
+  team: one(teams, {
+    fields: [activityLogs.teamId],
+    references: [teams.id],
+  }),
+  user: one(users, {
+    fields: [activityLogs.userId],
+    references: [users.id],
+  }),
+}));
+
 export const sitesRelations = relations(sites, ({ one, many }) => ({
   team: one(teams, { fields: [sites.teamId], references: [teams.id] }),
   postTypes: many(postTypes),
@@ -284,6 +245,17 @@ export const mediaRelations = relations(media, ({ one }) => ({
   site: one(sites, { fields: [media.siteId], references: [sites.id] }),
 }));
 
+// Types
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type Team = typeof teams.$inferSelect;
+export type NewTeam = typeof teams.$inferInsert;
+export type TeamMember = typeof teamMembers.$inferSelect;
+export type NewTeamMember = typeof teamMembers.$inferInsert;
+export type ActivityLog = typeof activityLogs.$inferSelect;
+export type NewActivityLog = typeof activityLogs.$inferInsert;
+export type Invitation = typeof invitations.$inferSelect;
+export type NewInvitation = typeof invitations.$inferInsert;
 export type Site = typeof sites.$inferSelect;
 export type NewSite = typeof sites.$inferInsert;
 export type PostType = typeof postTypes.$inferSelect;
@@ -294,3 +266,32 @@ export type Media = typeof media.$inferSelect;
 export type NewMedia = typeof media.$inferInsert;
 export type Field = typeof fields.$inferSelect;
 export type NewField = typeof fields.$inferInsert;
+export type TeamDataWithMembers = Team & {
+  teamMembers: (TeamMember & {
+    user: Pick<User, "id" | "name" | "email">;
+  })[];
+};
+
+export enum ActivityType {
+  SIGN_UP = "SIGN_UP",
+  SIGN_IN = "SIGN_IN",
+  SIGN_OUT = "SIGN_OUT",
+  UPDATE_PASSWORD = "UPDATE_PASSWORD",
+  DELETE_ACCOUNT = "DELETE_ACCOUNT",
+  UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
+  CREATE_TEAM = "CREATE_TEAM",
+  REMOVE_TEAM_MEMBER = "REMOVE_TEAM_MEMBER",
+  INVITE_TEAM_MEMBER = "INVITE_TEAM_MEMBER",
+  ACCEPT_INVITATION = "ACCEPT_INVITATION",
+  CREATE_SITE = "CREATE_SITE",
+  UPDATE_SITE = "UPDATE_SITE",
+  DELETE_SITE = "DELETE_SITE",
+  CREATE_POST_TYPE = "CREATE_POST_TYPE",
+  UPDATE_POST_TYPE = "UPDATE_POST_TYPE",
+  DELETE_POST_TYPE = "DELETE_POST_TYPE",
+  CREATE_POST = "CREATE_POST",
+  UPDATE_POST = "UPDATE_POST",
+  DELETE_POST = "DELETE_POST",
+  UPLOAD_MEDIA = "UPLOAD_MEDIA",
+  DELETE_MEDIA = "DELETE_MEDIA",
+}

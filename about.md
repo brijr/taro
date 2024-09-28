@@ -1,160 +1,68 @@
-# TaroCMS Documentation
+# TaroCMS: Cultivating Rich Content Across Multiple Domains
 
-## Overview
+## Project Overview
 
-TaroCMS is a flexible, scalable, and user-friendly Content Management System (CMS) designed to manage content across multiple websites. It empowers content creators and web administrators to efficiently handle various content types and structures.
+We're excited to introduce TaroCMS, a next-generation Content Management System that's set to revolutionize how organizations nurture and grow their online presence across multiple websites. Just as the taro plant is known for its versatility and ability to thrive in diverse environments, TaroCMS is designed to be a flexible, scalable, and robust platform that empowers content creators and web administrators to cultivate rich, diverse content ecosystems.
 
 ## Key Features
 
-1. **Multi-site Management**: Manage multiple websites from a single dashboard.
-2. **Custom Post Types**: Create tailored content structures for each site.
-3. **Flexible Fields**: Design content with a wide array of field types.
-4. **Site Duplication**: Quickly launch new sites by duplicating existing ones.
-5. **Headless Architecture**: Provides a powerful API for seamless integration with various front-end technologies.
-6. **User-friendly Interface**: An intuitive dashboard built with modern web technologies.
+1. **Multi-site Cultivation**: Manage multiple websites from a single dashboard, allowing your content to flourish across various digital landscapes.
+
+2. **Adaptive Content Types**: Like the taro plant's ability to grow in various conditions, create tailored content structures that adapt to each site's unique needs.
+
+3. **Nutrient-Rich Fields**: Design your content with a diverse array of field types, ensuring your content is as nourishing and varied as the nutritious taro root.
+
+4. **Rapid Propagation**: Launch new sites quickly by duplicating existing ones, much like how taro can be propagated from cuttings.
+
+5. **Root System Architecture**: Built as a headless CMS, TaroCMS provides a powerful API that acts as a strong root system, supporting various front-end technologies.
+
+6. **User-friendly Growth Environment**: An intuitive dashboard ensures that cultivating your content is as natural and easy as tending to a well-maintained garden.
 
 ## Technology Stack
 
-- **Backend**: Next.js with TypeScript
-- **Database**: PostgreSQL
-- **ORM**: Drizzle ORM
-- **Frontend**: React with Tailwind CSS and shadcn/ui
-- **API**: RESTful API design
+- **Backend**: Next.js with TypeScript, providing a fertile ground for robust server-side operations.
+- **Database**: PostgreSQL, offering reliable and efficient data storage, like the nutrient-rich soil taro thrives in.
+- **ORM**: Drizzle ORM, enabling type-safe and performant database operations, ensuring your data ecosystem remains healthy.
+- **Frontend**: React with Tailwind CSS and shadcn/ui, creating a lush and responsive user interface.
+- **API**: RESTful API design, allowing your content to spread its roots into various platforms and services.
 
-## Project Structure
+## Why TaroCMS?
 
-### Directories
+In today's digital landscape, organizations often manage a diverse array of web properties, each with unique content needs. Traditional CMS solutions can be as rigid as monoculture farming. TaroCMS, inspired by the adaptable nature of the taro plant, offers:
 
-- `app/`: Contains the Next.js application pages and components.
-  - `(dashboard)/`: Contains dashboard-related pages.
-  - `dashboard/`: Contains pages for managing sites and post types.
-  - `sites/`: Contains pages for managing individual sites and their post types.
-  - `teams/`: Contains pages for managing teams and their sites.
-- `lib/`: Contains library code for database interactions and utility functions.
-  - `actions/`: Contains server-side actions for managing data.
-  - `auth/`: Contains authentication-related code.
-  - `db/`: Contains database schema and migration files.
-- `components/`: Contains reusable UI components.
+1. **Centralized Cultivation**: Manage all your sites from one place, like tending to a diverse garden from a central courtyard.
 
-### Key Files
+2. **Unparalleled Adaptability**: Create custom content structures that perfectly match each site's needs, adapting to different digital ecosystems.
 
-- `lib/db/schema.ts`: Defines the database schema using Drizzle ORM.
-- `lib/actions/sites.ts`: Contains server-side actions for managing sites.
-- `lib/actions/post-types.ts`: Contains server-side actions for managing post types.
-- `app/dashboard/sites/[siteId]/post-types/new/page.tsx`: Page for creating a new post type.
+3. **Scalable Growth**: Whether you're managing a small plot or vast fields of content, TaroCMS grows with your ambitions.
 
-## Database Schema
+4. **Developer-Friendly Ecosystem**: With its headless architecture and well-documented API, TaroCMS integrates seamlessly with your preferred front-end technologies, like taro complementing various cuisines.
 
-The database schema is defined using Drizzle ORM and includes the following tables:
+5. **Efficient Content Farming**: Features like site duplication and flexible content modeling streamline the process of planting and nurturing new web properties.
 
-- `users`: Stores user information.
-- `teams`: Stores team information.
-- `team_members`: Links users to teams with specific roles.
-- `activity_logs`: Logs user activities.
-- `invitations`: Manages team invitations.
-- `sites`: Represents different sites managed by teams.
-- `post_types`: Defines different types of posts within a site.
-- `posts`: Stores individual posts.
-- `fields`: Defines custom fields for post types.
-- `media`: Manages media files uploaded to the app.
+## Project Goals
 
-## Server-side Actions
+1. Develop a robust, scalable CMS that can handle multiple sites as efficiently as a well-planned crop rotation.
+2. Create an intuitive user interface that simplifies complex content management tasks, making content cultivation accessible to all.
+3. Build a flexible system for defining custom post types and fields, allowing content to adapt and thrive in any environment.
+4. Implement a powerful API for headless CMS functionality, enabling your content to take root anywhere.
+5. Ensure high performance and security standards, protecting your content harvest from threats.
 
-### Sites
+## Target Audience
 
-- `getSites(teamId: number)`: Retrieves all sites for a given team.
-- `getSite(id: number)`: Retrieves a specific site by ID.
-- `createSite(data: NewSite)`: Creates a new site.
-- `updateSite(id: number, data: Partial<NewSite)`: Updates an existing site.
-- `deleteSite(id: number)`: Deletes a site.
-- `toggleSiteStatus(id: number)`: Toggles the active status of a site.
-- `getSiteWithPostTypes(id: number)`: Retrieves a site with its post types.
-- `getSiteWithPostTypesAndFields(id: number)`: Retrieves a site with its post types and fields.
-- `duplicateSite(siteId: number)`: Duplicates a site along with its post types and fields.
+- Organizations managing multiple web properties (e.g., media companies, educational institutions, multi-brand businesses)
+- Web development agencies tending to multiple client websites
+- Content creators requiring flexible content structures for diverse projects
+- Developers looking for a customizable, API-first CMS solution to integrate into various digital ecosystems
 
-### Post Types
+## Future Growth Plans
 
-- `getPostTypes(siteId: number)`: Retrieves all post types for a given site.
-- `getPostType(id: number)`: Retrieves a specific post type by ID.
-- `createPostType(data: NewPostType)`: Creates a new post type.
-- `updatePostType(id: number, data: Partial<NewPostType)`: Updates an existing post type.
-- `deletePostType(id: number)`: Deletes a post type.
-- `togglePostTypeStatus(id: number)`: Toggles the active status of a post type.
-- `getPostTypeBySlug(siteId: number, slug: string)`: Retrieves a post type by its slug.
-- `getPostTypeWithFields(id: number)`: Retrieves a post type with its fields.
-- `getPostTypesWithFields(siteId: number)`: Retrieves all post types with their fields for a given site.
+While our initial release will focus on core functionalities, we have exciting plans to help TaroCMS flourish:
 
-## Frontend Components
+- Advanced user roles and permissions for collaborative cultivation
+- Integrated analytics and SEO tools to measure and enhance your content's growth
+- Workflow and collaboration features to streamline your content farming process
+- Enhanced media management capabilities for rich, visual content
+- Marketplace for extensions and themes, like a seed exchange for your digital garden
 
-### UI Components
-
-- `Avatar`: Displays user avatars with fallback images.
-- `Button`: Customizable button component with various styles and sizes.
-- `Card`: Card component with header, content, and footer sections.
-- `DropdownMenu`: Dropdown menu with various items and submenus.
-- `Form`: Form components including fields, labels, and validation messages.
-- `Input`: Custom input field component.
-- `Label`: Label component for form fields.
-- `RadioGroup`: Radio button group component.
-
-### Pages
-
-- `app/dashboard/sites/[siteId]/post-types/new/page.tsx`: Page for creating a new post type.
-- `app/sites/[siteId]/post-types/page.tsx`: Page for listing post types of a site.
-- `app/sites/[siteId]/post-types/[postTypeId]/posts/page.tsx`: Page for listing posts of a post type.
-- `app/sites/[siteId]/post-types/[postTypeId]/posts/new.tsx`: Page for creating a new post.
-
-## Environment Variables
-
-The following environment variables are used in the project:
-
-- `POSTGRES_URL`: URL for connecting to the PostgreSQL database.
-- `AWS_REGION`: AWS region for S3.
-- `AWS_ACCESS_KEY_ID`: AWS access key ID for S3.
-- `AWS_SECRET_ACCESS_KEY`: AWS secret access key for S3.
-- `S3_BUCKET_NAME`: Name of the S3 bucket for storing media files.
-- `AUTH_SECRET`: Secret key for signing JWT tokens.
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js
-- PostgreSQL
-
-### Installation
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-username/tarocms.git
-   cd tarocms
-   ```
-
-2. Install dependencies:
-   ```sh
-   pnpm install
-   ```
-
-3. Set up environment variables:
-   ```sh
-   cp .env.example .env
-   # Edit the .env file with your configuration
-   ```
-
-4. Run database migrations:
-   ```sh
-   pnpm run migrate
-   ```
-
-5. Start the development server:
-   ```sh
-   pnpm run dev
-   ```
-
-## Contributing
-
-Contributions are welcome! Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to contribute to this project.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+TaroCMS is not just another CMS; it's a comprehensive solution for nurturing a modern, multi-faceted web presence. By combining the adaptability and robustness of the taro plant with cutting-edge technology, we're cultivating a new standard in content management for the multi-site era.
