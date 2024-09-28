@@ -1,10 +1,12 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { sites, type NewSite, type Site } from '@/lib/db/schema'; // Import Site type
+import { sites, postTypes, type NewSite, type Site } from '@/lib/db/schema'; // Import Site type and postTypes table
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { siteSchema } from '@/lib/validations';
+import { getPostTypes } from '@/lib/actions/post-types'; // Import getPostTypes function
+import { getFields } from '@/lib/actions/fields'; // Import getFields function
 
 export async function getSites(teamId: number) {
   return await db.select().from(sites).where(eq(sites.teamId, teamId));
@@ -90,8 +92,8 @@ export async function duplicateSite(siteId: number) {
     settings: site.settings,
   }).returning();
 
-  const postTypes = await getPostTypes(siteId);
-  for (const postType of postTypes) {
+  const existingPostTypes = await getPostTypes(siteId);
+  for (const postType of existingPostTypes) {
     const newPostType = await db.insert(postTypes).values({
       siteId: newSite.id,
       name: postType.name,

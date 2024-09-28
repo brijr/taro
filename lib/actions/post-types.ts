@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { postTypeSchema } from '@/lib/validations';
 import { eq, and } from 'drizzle-orm';
 
-export async function getPostTypes(siteId: number) {
+export async function getPostTypes(siteId: number): Promise<PostType[]> {
   return await db.select().from(postTypes).where(eq(postTypes.siteId, siteId));
 }
 
