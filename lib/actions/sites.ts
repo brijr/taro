@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { sites, type NewSite } from '@/lib/db/schema';
+import { sites, type NewSite, type Site } from '@/lib/db/schema'; // Import Site type
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { siteSchema } from '@/lib/validations';
