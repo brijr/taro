@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { posts, type NewPost } from '@/lib/db/schema';
+import { posts, type NewPost, type Post } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -9,7 +9,7 @@ export async function getPosts(postTypeId: number) {
   return await db.select().from(posts).where(eq(posts.postTypeId, postTypeId));
 }
 
-export async function getPost(id: number) {
+export async function getPost(id: number): Promise<Post | null> {
   const result = await db.select().from(posts).where(eq(posts.id, id)).limit(1);
   return result[0] || null;
 }
@@ -23,7 +23,7 @@ export async function createPost(data: NewPost) {
 export async function updatePost(id: number, data: Partial<NewPost>) {
   const updatedPost = await db
     .update(posts)
-    .set(data)
+    .set({ ...data, updatedAt: new Date() })
     .where(eq(posts.id, id))
     .returning();
   revalidatePath(`/sites/${updatedPost[0].postTypeId}/posts`);
@@ -57,4 +57,13 @@ export async function unpublishPost(id: number) {
     .returning();
   revalidatePath(`/sites/${unpublishedPost[0].postTypeId}/posts`);
   return unpublishedPost[0];
+}
+
+export async function getPostBySlug(postTypeId: number, slug: string): Promise<Post | null> {
+  const result = await db
+    .select()
+    .from(posts)
+    .where(and(eq(posts.postTypeId, postTypeId), eq(posts.slug, slug)))
+    .limit(1);
+  return result[0] || null;
 }
