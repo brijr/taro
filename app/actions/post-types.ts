@@ -1,9 +1,10 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { postTypes, fields, type PostType } from '@/lib/db/schema';
+import { postTypes, fields, type PostType, type NewPostType } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { postTypeSchema } from '@/lib/validations';
 
 export async function getPostTypes(siteId: number) {
   return await db.select().from(postTypes).where(eq(postTypes.siteId, siteId));
@@ -15,15 +16,17 @@ export async function getPostType(id: number): Promise<PostType | null> {
 }
 
 export async function createPostType(data: NewPostType) {
-  const newPostType = await db.insert(postTypes).values(data).returning();
-  revalidatePath(`/sites/${data.siteId}/post-types`);
+  const validatedData = postTypeSchema.parse(data);
+  const newPostType = await db.insert(postTypes).values(validatedData).returning();
+  revalidatePath(`/sites/${validatedData.siteId}/post-types`);
   return newPostType[0];
 }
 
 export async function updatePostType(id: number, data: Partial<NewPostType>) {
+  const validatedData = postTypeSchema.partial().parse(data);
   const updatedPostType = await db
     .update(postTypes)
-    .set({ ...data, updatedAt: new Date() })
+    .set({ ...validatedData, updatedAt: new Date() })
     .where(eq(postTypes.id, id))
     .returning();
   revalidatePath(`/sites/${updatedPostType[0].siteId}/post-types`);

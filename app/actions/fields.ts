@@ -4,6 +4,7 @@ import { db } from '@/lib/db/drizzle';
 import { fields, type NewField, type Field } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { fieldSchema } from '@/lib/validations';
 
 export async function getFields(postTypeId: number) {
   return await db.select().from(fields).where(eq(fields.postTypeId, postTypeId));
@@ -15,15 +16,17 @@ export async function getField(id: number): Promise<Field | null> {
 }
 
 export async function createField(data: NewField) {
-  const newField = await db.insert(fields).values(data).returning();
-  revalidatePath(`/sites/${data.postTypeId}/post-types`);
+  const validatedData = fieldSchema.parse(data);
+  const newField = await db.insert(fields).values(validatedData).returning();
+  revalidatePath(`/sites/${validatedData.postTypeId}/post-types`);
   return newField[0];
 }
 
 export async function updateField(id: number, data: Partial<NewField>) {
+  const validatedData = fieldSchema.partial().parse(data);
   const updatedField = await db
     .update(fields)
-    .set({ ...data, updatedAt: new Date() })
+    .set({ ...validatedData, updatedAt: new Date() })
     .where(eq(fields.id, id))
     .returning();
   revalidatePath(`/sites/${updatedField[0].postTypeId}/post-types`);

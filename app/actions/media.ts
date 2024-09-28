@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { mediaSchema } from '@/lib/validations';
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -47,22 +48,25 @@ export async function createMedia(data: NewMedia, file: File) {
     throw new Error('Failed to upload file to S3');
   }
 
-  const newMedia = await db.insert(media).values({
+  const validatedData = mediaSchema.parse({
     ...data,
     fileName: file.name,
     fileType: file.type,
     fileSize: file.size,
     url: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`,
-  }).returning();
+  });
 
-  revalidatePath(`/sites/${data.siteId}/media`);
+  const newMedia = await db.insert(media).values(validatedData).returning();
+
+  revalidatePath(`/sites/${validatedData.siteId}/media`);
   return newMedia[0];
 }
 
 export async function updateMedia(id: number, data: Partial<NewMedia>) {
+  const validatedData = mediaSchema.partial().parse(data);
   const updatedMedia = await db
     .update(media)
-    .set({ ...data, updatedAt: new Date() })
+    .set({ ...validatedData, updatedAt: new Date() })
     .where(eq(media.id, id))
     .returning();
   revalidatePath(`/sites/${updatedMedia[0].siteId}/media`);

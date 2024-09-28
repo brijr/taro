@@ -1,9 +1,10 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { sites, postTypes, fields, type Site } from '@/lib/db/schema';
+import { sites, type NewSite, type Site } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { siteSchema } from '@/lib/validations';
 
 export async function getSites(teamId: number) {
   return await db.select().from(sites).where(eq(sites.teamId, teamId));
@@ -15,15 +16,17 @@ export async function getSite(id: number): Promise<Site | null> {
 }
 
 export async function createSite(data: NewSite) {
-  const newSite = await db.insert(sites).values(data).returning();
-  revalidatePath(`/teams/${data.teamId}/sites`);
+  const validatedData = siteSchema.parse(data);
+  const newSite = await db.insert(sites).values(validatedData).returning();
+  revalidatePath(`/teams/${validatedData.teamId}/sites`);
   return newSite[0];
 }
 
 export async function updateSite(id: number, data: Partial<NewSite>) {
+  const validatedData = siteSchema.partial().parse(data);
   const updatedSite = await db
     .update(sites)
-    .set({ ...data, updatedAt: new Date() })
+    .set({ ...validatedData, updatedAt: new Date() })
     .where(eq(sites.id, id))
     .returning();
   revalidatePath(`/teams/${updatedSite[0].teamId}/sites`);
