@@ -55,17 +55,17 @@ export async function toggleSiteStatus(id: number) {
   return updatedSite[0];
 }
 
-export async function getSiteWithPostTypes(id: number): Promise<Site & { postTypes: any[] } | null> {
+export async function getSiteWithPostTypes(id: number): Promise<(Site & { postTypes: any[] }) | null> {
   const result = await db.query.sites.findFirst({
     where: eq(sites.id, id),
     with: {
       postTypes: true,
     },
   });
-  return result;
+  return result || null;
 }
 
-export async function getSiteWithPostTypesAndFields(id: number): Promise<Site & { postTypes: any[] } | null> {
+export async function getSiteWithPostTypesAndFields(id: number): Promise<(Site & { postTypes: any[] }) | null> {
   const result = await db.query.sites.findFirst({
     where: eq(sites.id, id),
     with: {
@@ -76,5 +76,5 @@ export async function getSiteWithPostTypesAndFields(id: number): Promise<Site & 
       },
     },
   });
-  return result;
+  return result || null;
 }

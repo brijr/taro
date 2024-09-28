@@ -1,4 +1,4 @@
-import { db } from '../lib/db/drizzle';
+import { db, client } from '../lib/db/drizzle';
 import { sites, postTypes, fields, posts } from '../lib/db/schema';
 
 async function testMigrations() {
@@ -58,7 +58,7 @@ async function testMigrations() {
   } catch (error) {
     console.error('Error testing migrations:', error);
   } finally {
-    await db.end();
+    await client.end(); // Use client.end() instead of db.end()
   }
 }
 

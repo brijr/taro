@@ -1,84 +1,120 @@
-import { stripe } from '../payments/stripe';
-import { db } from './drizzle';
-import { users, teams, teamMembers } from './schema';
-import { hashPassword } from '@/lib/auth/session';
-
-async function createStripeProducts() {
-  console.log('Creating Stripe products and prices...');
-
-  const baseProduct = await stripe.products.create({
-    name: 'Base',
-    description: 'Base subscription plan',
-  });
-
-  await stripe.prices.create({
-    product: baseProduct.id,
-    unit_amount: 800, // $8 in cents
-    currency: 'usd',
-    recurring: {
-      interval: 'month',
-      trial_period_days: 7,
-    },
-  });
-
-  const plusProduct = await stripe.products.create({
-    name: 'Plus',
-    description: 'Plus subscription plan',
-  });
-
-  await stripe.prices.create({
-    product: plusProduct.id,
-    unit_amount: 1200, // $12 in cents
-    currency: 'usd',
-    recurring: {
-      interval: 'month',
-      trial_period_days: 7,
-    },
-  });
-
-  console.log('Stripe products and prices created successfully.');
-}
+import { db, client } from "./drizzle";
+import { users, teams, sites, postTypes, posts, fields } from "./schema";
+import { hashPassword } from "@/lib/auth/session";
 
 async function seed() {
-  const email = 'test@test.com';
-  const password = 'admin123';
-  const passwordHash = await hashPassword(password);
+  try {
+    console.log("Starting seed process...");
 
-  const [user] = await db
-    .insert(users)
-    .values([
+    // Create a user
+    const hashedPassword = await hashPassword("password123");
+    const [user] = await db
+      .insert(users)
+      .values({
+        name: "Test User",
+        email: "test@example.com",
+        passwordHash: hashedPassword,
+        role: "admin",
+      })
+      .returning();
+    console.log("Created user:", user);
+
+    // Create a team
+    const [team] = await db
+      .insert(teams)
+      .values({
+        name: "Test Team",
+      })
+      .returning();
+    console.log("Created team:", team);
+
+    // Create a site
+    const [site] = await db
+      .insert(sites)
+      .values({
+        teamId: team.id,
+        name: "Test Site",
+        domain: "test.com",
+        isActive: true,
+      })
+      .returning();
+    console.log("Created site:", site);
+
+    // Create a post type
+    const [postType] = await db
+      .insert(postTypes)
+      .values({
+        siteId: site.id,
+        name: "Blog Post",
+        slug: "blog-post",
+        description: "A standard blog post",
+        fields: [],
+        isActive: true,
+      })
+      .returning();
+    console.log("Created post type:", postType);
+
+    // Create fields for the post type
+    const fieldData = [
       {
-        email: email,
-        passwordHash: passwordHash,
-        role: "owner",
+        name: "Title",
+        slug: "title",
+        type: "text",
+        isRequired: true,
+        order: 0,
       },
-    ])
-    .returning();
+      {
+        name: "Content",
+        slug: "content",
+        type: "text",
+        isRequired: true,
+        order: 1,
+      },
+      {
+        name: "Featured Image",
+        slug: "featured-image",
+        type: "text",
+        isRequired: false,
+        order: 2,
+      },
+    ];
 
-  console.log('Initial user created.');
+    for (const field of fieldData) {
+      const [createdField] = await db
+        .insert(fields)
+        .values({
+          postTypeId: postType.id,
+          ...field,
+        })
+        .returning();
+      console.log("Created field:", createdField);
+    }
 
-  const [team] = await db
-    .insert(teams)
-    .values({
-      name: 'Test Team',
-    })
-    .returning();
+    // Create a post
+    const [post] = await db
+      .insert(posts)
+      .values({
+        postTypeId: postType.id,
+        authorId: user.id,
+        title: "First Blog Post",
+        slug: "first-blog-post",
+        content: JSON.stringify({
+          title: "First Blog Post",
+          content: "This is the content of the first blog post.",
+          "featured-image": "https://example.com/image.jpg",
+        }),
+        status: "published",
+        isPublished: true,
+      })
+      .returning();
+    console.log("Created post:", post);
 
-  await db.insert(teamMembers).values({
-    teamId: team.id,
-    userId: user.id,
-    role: 'owner',
-  });
-
-  await createStripeProducts();
+    console.log("Seed process completed successfully.");
+  } catch (error) {
+    console.error("Error during seed process:", error);
+  } finally {
+    await client.end();
+  }
 }
 
-seed()
-  .catch((error) => {
-    console.error('Seed process failed:', error);
-    process.exit(1);
-  })
-  .finally(() => {
-    console.log('Seed process finished. Exiting...');
-    process.exit(0);
-  });
+seed();
