@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { sites, postTypes, type NewSite, type Site } from '@/lib/db/schema'; // Import Site type and postTypes table
+import { sites, postTypes, fields, type NewSite, type Site } from '@/lib/db/schema'; // Import Site type and postTypes table
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { siteSchema } from '@/lib/validations';
@@ -84,7 +84,7 @@ export async function duplicateSite(siteId: number) {
   const site = await getSite(siteId);
   if (!site) throw new Error('Site not found');
 
-  const newSite = await db.insert(sites).values({
+  const newSiteArray = await db.insert(sites).values({
     teamId: site.teamId,
     name: `${site.name} Copy`,
     domain: `${site.domain}-copy`,
@@ -92,9 +92,11 @@ export async function duplicateSite(siteId: number) {
     settings: site.settings,
   }).returning();
 
+  const newSite = newSiteArray[0]; // Access the first element of the array
+
   const existingPostTypes = await getPostTypes(siteId);
   for (const postType of existingPostTypes) {
-    const newPostType = await db.insert(postTypes).values({
+    const newPostTypeArray = await db.insert(postTypes).values({
       siteId: newSite.id,
       name: postType.name,
       slug: `${postType.slug}-copy`,
@@ -103,8 +105,10 @@ export async function duplicateSite(siteId: number) {
       isActive: postType.isActive,
     }).returning();
 
-    const fields = await getFields(postType.id);
-    for (const field of fields) {
+    const newPostType = newPostTypeArray[0]; // Access the first element of the array
+
+    const existingFields = await getFields(postType.id); // Rename fields to existingFields
+    for (const field of existingFields) {
       await db.insert(fields).values({
         postTypeId: newPostType.id,
         name: field.name,
