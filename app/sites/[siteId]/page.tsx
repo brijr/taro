@@ -1,5 +1,6 @@
 import { getSiteWithPostTypes } from "@/lib/actions/sites";
 import Link from "next/link";
+import { Site, PostType } from '@/lib/db/schema';
 
 export default async function SitePage({
   params,
@@ -21,7 +22,7 @@ export default async function SitePage({
         Create New Post Type
       </Link>
       <ul>
-        {site.postTypes.map((postType) => (
+        {site.postTypes.map((postType: PostType) => (
           <li key={postType.id}>
             <Link href={`/sites/${site.id}/post-types/${postType.id}`}>
               {postType.name}
