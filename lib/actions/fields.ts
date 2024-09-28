@@ -16,14 +16,20 @@ export async function getField(id: number): Promise<Field | null> {
 }
 
 export async function createField(data: NewField) {
-  const validatedData = fieldSchema.parse(data);
+  const validatedData = fieldSchema.parse({
+    ...data,
+    options: data.options || {}, // Ensure options is an object
+  });
   const newField = await db.insert(fields).values(validatedData).returning();
   revalidatePath(`/sites/${validatedData.postTypeId}/post-types`);
   return newField[0];
 }
 
 export async function updateField(id: number, data: Partial<NewField>) {
-  const validatedData = fieldSchema.partial().parse(data);
+  const validatedData = fieldSchema.partial().parse({
+    ...data,
+    options: data.options || {}, // Ensure options is an object
+  });
   const updatedField = await db
     .update(fields)
     .set({ ...validatedData, updatedAt: new Date() })

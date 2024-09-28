@@ -48,7 +48,7 @@ export default function Fields({
       isRequired,
       order: fields.length,
       defaultValue: null,
-      options: null,
+      options: {}, // Ensure options is an object
     });
     setName("");
     setSlug("");
