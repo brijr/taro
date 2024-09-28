@@ -1,10 +1,11 @@
 "use client";
 
-import { createPost } from "@/lib/actions/posts";
-import { getPostType } from "@/lib/actions/post-types";
-import { getFields } from "@/lib/actions/fields";
+import { createPost } from "@/app/actions/posts";
+import { getPostType } from "@/app/actions/post-types";
+import { getFields } from "@/app/actions/fields";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { PostType, Field } from "@/lib/db/schema";
 
 export default function NewPost({
   params,
@@ -12,8 +13,8 @@ export default function NewPost({
   params: { siteId: string; postTypeId: string };
 }) {
   const router = useRouter();
-  const [postType, setPostType] = useState(null);
-  const [fields, setFields] = useState([]);
+  const [postType, setPostType] = useState<PostType | null>(null);
+  const [fields, setFields] = useState<Field[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -26,16 +27,18 @@ export default function NewPost({
   }, [params.postTypeId]);
 
   async function handleSubmit(formData: FormData) {
+    if (!postType) return;
+
     const title = formData.get("title") as string;
     const slug = formData.get("slug") as string;
-    const content = {};
+    const content: Record<string, unknown> = {};
 
     fields.forEach((field) => {
       content[field.slug] = formData.get(field.slug);
     });
 
     await createPost({
-      postTypeId: parseInt(params.postTypeId),
+      postTypeId: postType.id,
       authorId: 1, // You'll need to get the actual author ID
       title,
       slug,
