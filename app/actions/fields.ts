@@ -58,3 +58,13 @@ export async function reorderFields(postTypeId: number, fieldIds: number[]) {
   await Promise.all(updates);
   revalidatePath(`/sites/${postTypeId}/post-types`);
 }
+
+export async function getFieldWithPostType(id: number): Promise<Field & { postType: any } | null> {
+  const result = await db.query.fields.findFirst({
+    where: eq(fields.id, id),
+    with: {
+      postType: true,
+    },
+  });
+  return result;
+}

@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { postTypes, type NewPostType, type PostType } from '@/lib/db/schema';
+import { postTypes, fields, type PostType } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -59,4 +59,24 @@ export async function getPostTypeBySlug(siteId: number, slug: string): Promise<P
     .where(and(eq(postTypes.siteId, siteId), eq(postTypes.slug, slug)))
     .limit(1);
   return result[0] || null;
+}
+
+export async function getPostTypeWithFields(id: number): Promise<PostType & { fields: any[] } | null> {
+  const result = await db.query.postTypes.findFirst({
+    where: eq(postTypes.id, id),
+    with: {
+      fields: true,
+    },
+  });
+  return result;
+}
+
+export async function getPostTypesWithFields(siteId: number): Promise<(PostType & { fields: any[] })[]> {
+  const result = await db.query.postTypes.findMany({
+    where: eq(postTypes.siteId, siteId),
+    with: {
+      fields: true,
+    },
+  });
+  return result;
 }

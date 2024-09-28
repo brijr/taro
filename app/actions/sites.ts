@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { sites, type NewSite, type Site } from '@/lib/db/schema';
+import { sites, postTypes, fields, type Site } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -50,4 +50,28 @@ export async function toggleSiteStatus(id: number) {
     .returning();
   revalidatePath(`/teams/${updatedSite[0].teamId}/sites`);
   return updatedSite[0];
+}
+
+export async function getSiteWithPostTypes(id: number): Promise<Site & { postTypes: any[] } | null> {
+  const result = await db.query.sites.findFirst({
+    where: eq(sites.id, id),
+    with: {
+      postTypes: true,
+    },
+  });
+  return result;
+}
+
+export async function getSiteWithPostTypesAndFields(id: number): Promise<Site & { postTypes: any[] } | null> {
+  const result = await db.query.sites.findFirst({
+    where: eq(sites.id, id),
+    with: {
+      postTypes: {
+        with: {
+          fields: true,
+        },
+      },
+    },
+  });
+  return result;
 }

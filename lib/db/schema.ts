@@ -241,21 +241,19 @@ export const media = pgTable("media", {
 export const sitesRelations = relations(sites, ({ one, many }) => ({
   team: one(teams, { fields: [sites.teamId], references: [teams.id] }),
   postTypes: many(postTypes),
-  media: many(media),
 }));
 
 export const postTypesRelations = relations(postTypes, ({ one, many }) => ({
   site: one(sites, { fields: [postTypes.siteId], references: [sites.id] }),
-  posts: many(posts),
   fields: many(fields),
+  posts: many(posts),
 }));
 
-export const postsRelations = relations(posts, ({ one }) => ({
+export const fieldsRelations = relations(fields, ({ one }) => ({
   postType: one(postTypes, {
-    fields: [posts.postTypeId],
+    fields: [fields.postTypeId],
     references: [postTypes.id],
   }),
-  author: one(users, { fields: [posts.authorId], references: [users.id] }),
 }));
 
 export const mediaRelations = relations(media, ({ one }) => ({
@@ -285,13 +283,6 @@ export const fields = pgTable(
     };
   }
 );
-
-export const fieldsRelations = relations(fields, ({ one }) => ({
-  postType: one(postTypes, {
-    fields: [fields.postTypeId],
-    references: [postTypes.id],
-  }),
-}));
 
 export type Site = typeof sites.$inferSelect;
 export type NewSite = typeof sites.$inferInsert;
