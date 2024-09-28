@@ -77,3 +77,44 @@ export async function getSiteWithPostTypesAndFields(id: number): Promise<(Site &
   });
   return result || null;
 }
+
+export async function duplicateSite(siteId: number) {
+  const site = await getSite(siteId);
+  if (!site) throw new Error('Site not found');
+
+  const newSite = await db.insert(sites).values({
+    teamId: site.teamId,
+    name: `${site.name} Copy`,
+    domain: `${site.domain}-copy`,
+    isActive: site.isActive,
+    settings: site.settings,
+  }).returning();
+
+  const postTypes = await getPostTypes(siteId);
+  for (const postType of postTypes) {
+    const newPostType = await db.insert(postTypes).values({
+      siteId: newSite.id,
+      name: postType.name,
+      slug: `${postType.slug}-copy`,
+      description: postType.description,
+      fields: postType.fields,
+      isActive: postType.isActive,
+    }).returning();
+
+    const fields = await getFields(postType.id);
+    for (const field of fields) {
+      await db.insert(fields).values({
+        postTypeId: newPostType.id,
+        name: field.name,
+        slug: field.slug,
+        type: field.type,
+        isRequired: field.isRequired,
+        defaultValue: field.defaultValue,
+        options: field.options,
+        order: field.order,
+      });
+    }
+  }
+
+  return newSite;
+}
