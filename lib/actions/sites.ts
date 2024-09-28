@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { sites, type NewSite, type Site } from '@/lib/db/schema';
+import { sites, type NewSite } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { siteSchema } from '@/lib/validations';
@@ -16,9 +16,8 @@ export async function getSite(id: number): Promise<Site | null> {
 }
 
 export async function createSite(data: NewSite) {
-  const validatedData = siteSchema.parse(data);
-  const newSite = await db.insert(sites).values(validatedData).returning();
-  revalidatePath(`/teams/${validatedData.teamId}/sites`);
+  const newSite = await db.insert(sites).values(data).returning();
+  revalidatePath(`/teams/${data.teamId}/sites`);
   return newSite[0];
 }
 
