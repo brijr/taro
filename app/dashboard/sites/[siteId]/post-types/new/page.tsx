@@ -14,8 +14,13 @@ export default function NewPostType({ params }: { params: { siteId: string } }) 
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    const siteId = parseInt(params.siteId, 10);
+    if (isNaN(siteId)) {
+      console.error("Invalid siteId:", params.siteId);
+      return;
+    }
     await createPostType({
-      siteId: parseInt(params.siteId),
+      siteId,
       name,
       slug,
       description,
