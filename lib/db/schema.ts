@@ -238,28 +238,6 @@ export const media = pgTable("media", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const sitesRelations = relations(sites, ({ one, many }) => ({
-  team: one(teams, { fields: [sites.teamId], references: [teams.id] }),
-  postTypes: many(postTypes),
-}));
-
-export const postTypesRelations = relations(postTypes, ({ one, many }) => ({
-  site: one(sites, { fields: [postTypes.siteId], references: [sites.id] }),
-  fields: many(fields),
-  posts: many(posts),
-}));
-
-export const fieldsRelations = relations(fields, ({ one }) => ({
-  postType: one(postTypes, {
-    fields: [fields.postTypeId],
-    references: [postTypes.id],
-  }),
-}));
-
-export const mediaRelations = relations(media, ({ one }) => ({
-  site: one(sites, { fields: [media.siteId], references: [sites.id] }),
-}));
-
 export const fields = pgTable(
   "fields",
   {
@@ -283,6 +261,28 @@ export const fields = pgTable(
     };
   }
 );
+
+export const sitesRelations = relations(sites, ({ one, many }) => ({
+  team: one(teams, { fields: [sites.teamId], references: [teams.id] }),
+  postTypes: many(postTypes),
+}));
+
+export const postTypesRelations = relations(postTypes, ({ one, many }) => ({
+  site: one(sites, { fields: [postTypes.siteId], references: [sites.id] }),
+  fields: many(fields),
+  posts: many(posts),
+}));
+
+export const fieldsRelations = relations(fields, ({ one }) => ({
+  postType: one(postTypes, {
+    fields: [fields.postTypeId],
+    references: [postTypes.id],
+  }),
+}));
+
+export const mediaRelations = relations(media, ({ one }) => ({
+  site: one(sites, { fields: [media.siteId], references: [sites.id] }),
+}));
 
 export type Site = typeof sites.$inferSelect;
 export type NewSite = typeof sites.$inferInsert;
