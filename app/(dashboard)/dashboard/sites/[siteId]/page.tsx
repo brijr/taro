@@ -1,85 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createPostType } from "@/lib/actions/post-types";
-import { Input } from "@/components/ui/input";
+import { getPostTypes, deletePostType } from "@/lib/actions/post-types";
 import { Button } from "@/components/ui/button";
+import { PostType } from "@/lib/db/schema";
 
-export default function NewPostType({ params }: { params: { siteId: string } }) {
+export default function SitePage({ params }: { params: { siteId: string } }) {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
-  const [description, setDescription] = useState("");
+  const [postTypes, setPostTypes] = useState<PostType[]>([]);
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    console.log("params.siteId:", params.siteId); // Add logging
-    const siteId = parseInt(params.siteId, 10);
-    if (isNaN(siteId)) {
-      console.error("Invalid siteId:", params.siteId);
-      return;
+  useEffect(() => {
+    async function fetchPostTypes() {
+      const siteId = parseInt(params.siteId, 10);
+      if (isNaN(siteId)) {
+        console.error("Invalid siteId:", params.siteId);
+        return;
+      }
+      const postTypes = await getPostTypes(siteId);
+      setPostTypes(postTypes);
     }
-    await createPostType({
-      siteId,
-      name,
-      slug,
-      description,
-      fields: [],
-      isActive: true,
-    });
-    router.push(`/dashboard/sites/${params.siteId}/post-types`);
+
+    fetchPostTypes();
+  }, [params.siteId]);
+
+  async function handleDelete(postTypeId: number) {
+    await deletePostType(postTypeId);
+    const siteId = parseInt(params.siteId, 10);
+    const updatedPostTypes = await getPostTypes(siteId);
+    setPostTypes(updatedPostTypes);
   }
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-6">Create New Post Type</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Post Type Name
-          </label>
-          <Input
-            id="name"
-            name="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="slug" className="block text-sm font-medium text-gray-700">
-            Slug
-          </label>
-          <Input
-            id="slug"
-            name="slug"
-            type="text"
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-            required
-            className="mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-            Description
-          </label>
-          <Input
-            id="description"
-            name="description"
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="mt-1"
-          />
-        </div>
-        <Button type="submit" className="w-full">
-          Create Post Type
-        </Button>
-      </form>
+      <h1 className="text-2xl font-bold mb-6">Post Types</h1>
+      <ul className="mb-6">
+        {postTypes.map((postType) => (
+          <li key={postType.id} className="mb-2">
+            <div className="p-4 bg-gray-100 rounded-lg flex justify-between items-center">
+              <div>
+                <h2 className="text-lg font-semibold">{postType.name}</h2>
+                <p className="text-sm text-gray-600">{postType.description}</p>
+              </div>
+              <div className="flex space-x-2">
+                <Button
+                  onClick={() =>
+                    router.push(`/dashboard/sites/${params.siteId}/post-types/${postType.id}/fields`)
+                  }
+                  className="ml-4"
+                >
+                  Manage Fields
+                </Button>
+                <Button
+                  onClick={() => handleDelete(postType.id)}
+                  className="ml-4"
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <Button
+        onClick={() =>
+          router.push(`/dashboard/sites/${params.siteId}/post-types/new`)
+        }
+        className="w-full"
+      >
+        Add New Post Type
+      </Button>
     </div>
   );
 }
