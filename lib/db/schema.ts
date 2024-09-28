@@ -247,6 +247,7 @@ export const sitesRelations = relations(sites, ({ one, many }) => ({
 export const postTypesRelations = relations(postTypes, ({ one, many }) => ({
   site: one(sites, { fields: [postTypes.siteId], references: [sites.id] }),
   posts: many(posts),
+  fields: many(fields),
 }));
 
 export const postsRelations = relations(posts, ({ one }) => ({
@@ -261,6 +262,37 @@ export const mediaRelations = relations(media, ({ one }) => ({
   site: one(sites, { fields: [media.siteId], references: [sites.id] }),
 }));
 
+export const fields = pgTable(
+  "fields",
+  {
+    id: serial("id").primaryKey(),
+    postTypeId: integer("post_type_id")
+      .notNull()
+      .references(() => postTypes.id),
+    name: varchar("name", { length: 100 }).notNull(),
+    slug: varchar("slug", { length: 100 }).notNull(),
+    type: varchar("type", { length: 50 }).notNull(),
+    isRequired: boolean("is_required").notNull().default(false),
+    defaultValue: jsonb("default_value"),
+    options: jsonb("options"),
+    order: integer("order").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      slugIdx: uniqueIndex("field_slug_idx").on(table.postTypeId, table.slug),
+    };
+  }
+);
+
+export const fieldsRelations = relations(fields, ({ one }) => ({
+  postType: one(postTypes, {
+    fields: [fields.postTypeId],
+    references: [postTypes.id],
+  }),
+}));
+
 export type Site = typeof sites.$inferSelect;
 export type NewSite = typeof sites.$inferInsert;
 export type PostType = typeof postTypes.$inferSelect;
@@ -269,3 +301,5 @@ export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
 export type Media = typeof media.$inferSelect;
 export type NewMedia = typeof media.$inferInsert;
+export type Field = typeof fields.$inferSelect;
+export type NewField = typeof fields.$inferInsert;
