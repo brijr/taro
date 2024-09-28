@@ -11,7 +11,9 @@ export default async function PostTypesPage({ params }: { params: { siteId: stri
       <ul>
         {postTypes.map((postType) => (
           <li key={postType.id}>
-            {postType.name} - {postType.slug}
+            <Link href={`/sites/${params.siteId}/post-types/${postType.id}`}>
+              {postType.name}
+            </Link>
             {postType.isActive ? ' (Active)' : ' (Inactive)'}
           </li>
         ))}

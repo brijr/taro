@@ -17,7 +17,10 @@ export default async function PostsPage({ params }: { params: { siteId: string, 
       <ul>
         {posts.map((post) => (
           <li key={post.id}>
-            {post.title} - {post.status}
+            <Link href={`/sites/${params.siteId}/post-types/${params.postTypeId}/posts/${post.id}`}>
+              {post.title}
+            </Link>
+            - {post.status}
             {post.isPublished ? ' (Published)' : ' (Draft)'}
           </li>
         ))}
