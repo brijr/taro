@@ -1,8 +1,8 @@
 "use client";
 
-import { createPost } from "@/app/actions/posts";
-import { getPostType } from "@/app/actions/post-types";
-import { getFields } from "@/app/actions/fields";
+import { createPost } from "@/lib/actions/posts";
+import { getPostType } from "@/lib/actions/post-types";
+import { getFields } from "@/lib/actions/fields";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { PostType, Field } from "@/lib/db/schema";
