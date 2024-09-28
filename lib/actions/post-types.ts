@@ -1,10 +1,10 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { postTypes, fields, type PostType, type NewPostType } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { postTypes, type NewPostType } from '@/lib/db/schema';
 import { revalidatePath } from 'next/cache';
 import { postTypeSchema } from '@/lib/validations';
+import { eq, and } from 'drizzle-orm';
 
 export async function getPostTypes(siteId: number) {
   return await db.select().from(postTypes).where(eq(postTypes.siteId, siteId));
