@@ -1,7 +1,11 @@
-import { getSiteWithPostTypes } from '@/app/actions/sites';
-import Link from 'next/link';
+import { getSiteWithPostTypes } from "@/lib/actions/sites";
+import Link from "next/link";
 
-export default async function SitePage({ params }: { params: { siteId: string } }) {
+export default async function SitePage({
+  params,
+}: {
+  params: { siteId: string };
+}) {
   const site = await getSiteWithPostTypes(parseInt(params.siteId));
 
   if (!site) {
@@ -13,7 +17,9 @@ export default async function SitePage({ params }: { params: { siteId: string } 
       <h1>{site.name}</h1>
       <p>Domain: {site.domain}</p>
       <h2>Post Types:</h2>
-      <Link href={`/sites/${site.id}/post-types/new`}>Create New Post Type</Link>
+      <Link href={`/sites/${site.id}/post-types/new`}>
+        Create New Post Type
+      </Link>
       <ul>
         {site.postTypes.map((postType) => (
           <li key={postType.id}>

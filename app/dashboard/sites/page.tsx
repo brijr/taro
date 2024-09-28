@@ -1,5 +1,5 @@
-import { getSites } from '@/app/actions/sites';
-import Link from 'next/link';
+import { getSites } from "@/lib/actions/sites";
+import Link from "next/link";
 
 export default async function SitesPage() {
   // TODO: Replace with actual team ID from user session
@@ -11,10 +11,10 @@ export default async function SitesPage() {
       <h1>Your Sites</h1>
       <Link href="/dashboard/sites/new">Create New Site</Link>
       <ul>
-        {sites.map(site => (
+        {sites.map((site) => (
           <li key={site.id}>
             <Link href={`/sites/${site.id}`}>{site.name}</Link>
-            {site.isActive ? ' (Active)' : ' (Inactive)'}
+            {site.isActive ? " (Active)" : " (Inactive)"}
           </li>
         ))}
       </ul>

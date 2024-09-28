@@ -1,6 +1,10 @@
-import { getSites } from '@/app/actions/sites';
+import { getSites } from "@/lib/actions/sites";
 
-export default async function SitesPage({ params }: { params: { teamId: string } }) {
+export default async function SitesPage({
+  params,
+}: {
+  params: { teamId: string };
+}) {
   const sites = await getSites(parseInt(params.teamId));
 
   return (
@@ -8,7 +12,9 @@ export default async function SitesPage({ params }: { params: { teamId: string }
       <h1>Sites</h1>
       <ul>
         {sites.map((site) => (
-          <li key={site.id}>{site.name} - {site.domain}</li>
+          <li key={site.id}>
+            {site.name} - {site.domain}
+          </li>
         ))}
       </ul>
     </div>

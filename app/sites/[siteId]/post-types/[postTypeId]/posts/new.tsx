@@ -1,12 +1,16 @@
-'use client'
+"use client";
 
-import { createPost } from '@/app/actions/posts';
-import { getPostType } from '@/app/actions/post-types';
-import { getFields } from '@/app/actions/fields';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { createPost } from "@/lib/actions/posts";
+import { getPostType } from "@/lib/actions/post-types";
+import { getFields } from "@/lib/actions/fields";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
-export default function NewPost({ params }: { params: { siteId: string, postTypeId: string } }) {
+export default function NewPost({
+  params,
+}: {
+  params: { siteId: string; postTypeId: string };
+}) {
   const router = useRouter();
   const [postType, setPostType] = useState(null);
   const [fields, setFields] = useState([]);
@@ -22,11 +26,11 @@ export default function NewPost({ params }: { params: { siteId: string, postType
   }, [params.postTypeId]);
 
   async function handleSubmit(formData: FormData) {
-    const title = formData.get('title') as string;
-    const slug = formData.get('slug') as string;
+    const title = formData.get("title") as string;
+    const slug = formData.get("slug") as string;
     const content = {};
 
-    fields.forEach(field => {
+    fields.forEach((field) => {
       content[field.slug] = formData.get(field.slug);
     });
 
@@ -36,11 +40,13 @@ export default function NewPost({ params }: { params: { siteId: string, postType
       title,
       slug,
       content,
-      status: 'draft',
+      status: "draft",
       isPublished: false,
     });
 
-    router.push(`/sites/${params.siteId}/post-types/${params.postTypeId}/posts`);
+    router.push(
+      `/sites/${params.siteId}/post-types/${params.postTypeId}/posts`
+    );
   }
 
   if (!postType) {
@@ -56,10 +62,12 @@ export default function NewPost({ params }: { params: { siteId: string, postType
       {fields.map((field) => (
         <div key={field.id}>
           <label>{field.name}</label>
-          {field.type === 'text' && <input name={field.slug} type="text" />}
-          {field.type === 'number' && <input name={field.slug} type="number" />}
-          {field.type === 'boolean' && <input name={field.slug} type="checkbox" />}
-          {field.type === 'date' && <input name={field.slug} type="date" />}
+          {field.type === "text" && <input name={field.slug} type="text" />}
+          {field.type === "number" && <input name={field.slug} type="number" />}
+          {field.type === "boolean" && (
+            <input name={field.slug} type="checkbox" />
+          )}
+          {field.type === "date" && <input name={field.slug} type="date" />}
         </div>
       ))}
 

@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { createSite } from '@/app/actions/sites';
-import { useRouter } from 'next/navigation';
+import { createSite } from "@/lib/actions/sites";
+import { useRouter } from "next/navigation";
 
 export default function NewSite({ teamId }: { teamId: number }) {
   const router = useRouter();
 
   async function handleSubmit(formData: FormData) {
-    const name = formData.get('name') as string;
-    const domain = formData.get('domain') as string;
+    const name = formData.get("name") as string;
+    const domain = formData.get("domain") as string;
 
     await createSite({
       teamId,

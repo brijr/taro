@@ -1,19 +1,25 @@
-'use client'
+"use client";
 
-import { createPostType } from '@/app/actions/post-types';
-import { createField } from '@/app/actions/fields';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { createPostType } from "@/lib/actions/post-types";
+import { createField } from "@/lib/actions/fields";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export default function NewPostType({ params }: { params: { siteId: string } }) {
+export default function NewPostType({
+  params,
+}: {
+  params: { siteId: string };
+}) {
   const router = useRouter();
   const siteId = parseInt(params.siteId);
-  const [fields, setFields] = useState<Array<{ name: string; type: string; isRequired: boolean }>>([]);
+  const [fields, setFields] = useState<
+    Array<{ name: string; type: string; isRequired: boolean }>
+  >([]);
 
   async function handleSubmit(formData: FormData) {
-    const name = formData.get('name') as string;
-    const slug = formData.get('slug') as string;
-    const description = formData.get('description') as string;
+    const name = formData.get("name") as string;
+    const slug = formData.get("slug") as string;
+    const description = formData.get("description") as string;
 
     const newPostType = await createPostType({
       siteId,
@@ -29,7 +35,7 @@ export default function NewPostType({ params }: { params: { siteId: string } }) 
       await createField({
         postTypeId: newPostType.id,
         name: field.name,
-        slug: field.name.toLowerCase().replace(/\s+/g, '-'),
+        slug: field.name.toLowerCase().replace(/\s+/g, "-"),
         type: field.type,
         isRequired: field.isRequired,
         order: fields.indexOf(field),
@@ -40,10 +46,13 @@ export default function NewPostType({ params }: { params: { siteId: string } }) 
   }
 
   function addField() {
-    setFields([...fields, { name: '', type: 'text', isRequired: false }]);
+    setFields([...fields, { name: "", type: "text", isRequired: false }]);
   }
 
-  function updateField(index: number, updates: Partial<typeof fields[number]>) {
+  function updateField(
+    index: number,
+    updates: Partial<(typeof fields)[number]>
+  ) {
     const newFields = [...fields];
     newFields[index] = { ...newFields[index], ...updates };
     setFields(newFields);
@@ -77,13 +86,17 @@ export default function NewPostType({ params }: { params: { siteId: string } }) 
             <input
               type="checkbox"
               checked={field.isRequired}
-              onChange={(e) => updateField(index, { isRequired: e.target.checked })}
+              onChange={(e) =>
+                updateField(index, { isRequired: e.target.checked })
+              }
             />
             Required
           </label>
         </div>
       ))}
-      <button type="button" onClick={addField}>Add Field</button>
+      <button type="button" onClick={addField}>
+        Add Field
+      </button>
 
       <button type="submit">Create Post Type</button>
     </form>

@@ -1,8 +1,12 @@
-import { getPostTypeWithFields } from '@/app/actions/post-types';
-import { getPosts } from '@/app/actions/posts';
-import Link from 'next/link';
+import { getPostTypeWithFields } from "@/lib/actions/post-types";
+import { getPosts } from "@/lib/actions/posts";
+import Link from "next/link";
 
-export default async function PostTypePage({ params }: { params: { siteId: string, postTypeId: string } }) {
+export default async function PostTypePage({
+  params,
+}: {
+  params: { siteId: string; postTypeId: string };
+}) {
   const postType = await getPostTypeWithFields(parseInt(params.postTypeId));
   const posts = await getPosts(parseInt(params.postTypeId));
 
@@ -17,18 +21,26 @@ export default async function PostTypePage({ params }: { params: { siteId: strin
       <h2>Fields:</h2>
       <ul>
         {postType.fields.map((field) => (
-          <li key={field.id}>{field.name} ({field.type})</li>
+          <li key={field.id}>
+            {field.name} ({field.type})
+          </li>
         ))}
       </ul>
       <h2>Posts:</h2>
-      <Link href={`/sites/${params.siteId}/post-types/${postType.id}/posts/new`}>Create New Post</Link>
+      <Link
+        href={`/sites/${params.siteId}/post-types/${postType.id}/posts/new`}
+      >
+        Create New Post
+      </Link>
       <ul>
         {posts.map((post) => (
           <li key={post.id}>
-            <Link href={`/sites/${params.siteId}/post-types/${postType.id}/posts/${post.id}`}>
+            <Link
+              href={`/sites/${params.siteId}/post-types/${postType.id}/posts/${post.id}`}
+            >
               {post.title}
             </Link>
-            {post.isPublished ? ' (Published)' : ' (Draft)'}
+            {post.isPublished ? " (Published)" : " (Draft)"}
           </li>
         ))}
       </ul>

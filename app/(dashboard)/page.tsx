@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Layout, FileText, Image } from 'lucide-react';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Layout, FileText, Image } from "lucide-react";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -11,10 +11,13 @@ export default function HomePage() {
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
                 Welcome to TaroCMS
-                <span className="block text-orange-500">Your Flexible Content Management System</span>
+                <span className="block text-orange-500">
+                  Your Flexible Content Management System
+                </span>
               </h1>
               <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Manage multiple sites, create custom post types, and publish content with ease using our powerful and intuitive CMS.
+                Manage multiple sites, create custom post types, and publish
+                content with ease using our powerful and intuitive CMS.
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
                 <Link href="/dashboard/sites">
@@ -52,7 +55,8 @@ export default function HomePage() {
                   Multiple Sites
                 </h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Manage multiple websites from a single dashboard, perfect for organizations with various brands or departments.
+                  Manage multiple websites from a single dashboard, perfect for
+                  organizations with various brands or departments.
                 </p>
               </div>
             </div>
@@ -66,7 +70,8 @@ export default function HomePage() {
                   Custom Post Types
                 </h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Create tailored content structures for each site. Design your content with a wide array of field types.
+                  Create tailored content structures for each site. Design your
+                  content with a wide array of field types.
                 </p>
               </div>
             </div>
@@ -80,7 +85,8 @@ export default function HomePage() {
                   Media Management
                 </h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Easily upload, organize, and manage your media files with our integrated S3 storage solution.
+                  Easily upload, organize, and manage your media files with our
+                  integrated S3 storage solution.
                 </p>
               </div>
             </div>
@@ -96,7 +102,8 @@ export default function HomePage() {
                 Ready to start managing your content?
               </h2>
               <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                TaroCMS provides everything you need to create, manage, and publish content across multiple sites. Get started today!
+                TaroCMS provides everything you need to create, manage, and
+                publish content across multiple sites. Get started today!
               </p>
             </div>
             <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
