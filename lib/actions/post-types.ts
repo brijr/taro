@@ -64,14 +64,14 @@ export async function getPostTypeBySlug(siteId: number, slug: string): Promise<P
   return result[0] || null;
 }
 
-export async function getPostTypeWithFields(id: number): Promise<PostType & { fields: any[] } | null> {
+export async function getPostTypeWithFields(id: number): Promise<(PostType & { fields: any[] }) | null> {
   const result = await db.query.postTypes.findFirst({
     where: eq(postTypes.id, id),
     with: {
       fields: true,
     },
   });
-  return result;
+  return result || null;
 }
 
 export async function getPostTypesWithFields(siteId: number): Promise<(PostType & { fields: any[] })[]> {
