@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { media, type NewMedia } from '@/lib/db/schema';
+import { media, type NewMedia, type Media } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -9,7 +9,7 @@ export async function getMedia(siteId: number) {
   return await db.select().from(media).where(eq(media.siteId, siteId));
 }
 
-export async function getMediaItem(id: number) {
+export async function getMediaItem(id: number): Promise<Media | null> {
   const result = await db.select().from(media).where(eq(media.id, id)).limit(1);
   return result[0] || null;
 }
@@ -23,7 +23,7 @@ export async function createMedia(data: NewMedia) {
 export async function updateMedia(id: number, data: Partial<NewMedia>) {
   const updatedMedia = await db
     .update(media)
-    .set(data)
+    .set({ ...data, updatedAt: new Date() })
     .where(eq(media.id, id))
     .returning();
   revalidatePath(`/sites/${updatedMedia[0].siteId}/media`);
