@@ -1,12 +1,17 @@
 'use server'
 
 import { db } from '@/lib/db/drizzle';
-import { postTypes, type NewPostType } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { postTypes, type NewPostType, type PostType } from '@/lib/db/schema';
+import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 export async function getPostTypes(siteId: number) {
   return await db.select().from(postTypes).where(eq(postTypes.siteId, siteId));
+}
+
+export async function getPostType(id: number): Promise<PostType | null> {
+  const result = await db.select().from(postTypes).where(eq(postTypes.id, id)).limit(1);
+  return result[0] || null;
 }
 
 export async function createPostType(data: NewPostType) {
@@ -18,7 +23,7 @@ export async function createPostType(data: NewPostType) {
 export async function updatePostType(id: number, data: Partial<NewPostType>) {
   const updatedPostType = await db
     .update(postTypes)
-    .set(data)
+    .set({ ...data, updatedAt: new Date() })
     .where(eq(postTypes.id, id))
     .returning();
   revalidatePath(`/sites/${updatedPostType[0].siteId}/post-types`);
@@ -32,4 +37,26 @@ export async function deletePostType(id: number) {
     .returning();
   revalidatePath(`/sites/${deletedPostType[0].siteId}/post-types`);
   return deletedPostType[0];
+}
+
+export async function togglePostTypeStatus(id: number) {
+  const postType = await getPostType(id);
+  if (!postType) throw new Error('Post Type not found');
+
+  const updatedPostType = await db
+    .update(postTypes)
+    .set({ isActive: !postType.isActive, updatedAt: new Date() })
+    .where(eq(postTypes.id, id))
+    .returning();
+  revalidatePath(`/sites/${updatedPostType[0].siteId}/post-types`);
+  return updatedPostType[0];
+}
+
+export async function getPostTypeBySlug(siteId: number, slug: string): Promise<PostType | null> {
+  const result = await db
+    .select()
+    .from(postTypes)
+    .where(and(eq(postTypes.siteId, siteId), eq(postTypes.slug, slug)))
+    .limit(1);
+  return result[0] || null;
 }

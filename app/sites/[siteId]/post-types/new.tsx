@@ -3,8 +3,9 @@
 import { createPostType } from '@/app/actions/post-types';
 import { useRouter } from 'next/navigation';
 
-export default function NewPostType({ siteId }: { siteId: number }) {
+export default function NewPostType({ params }: { params: { siteId: string } }) {
   const router = useRouter();
+  const siteId = parseInt(params.siteId);
 
   async function handleSubmit(formData: FormData) {
     const name = formData.get('name') as string;
@@ -26,7 +27,10 @@ export default function NewPostType({ siteId }: { siteId: number }) {
 
   return (
     <form action={handleSubmit}>
-      {/* Form fields here */}
+      <input name="name" placeholder="Post Type Name" required />
+      <input name="slug" placeholder="Slug" required />
+      <textarea name="description" placeholder="Description"></textarea>
+      <textarea name="fields" placeholder="Fields (JSON)" required></textarea>
       <button type="submit">Create Post Type</button>
     </form>
   );
