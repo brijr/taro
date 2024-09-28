@@ -7,14 +7,30 @@ export default async function SitesPage() {
   const sites = await getSites(teamId);
 
   return (
-    <div>
-      <h1>Your Sites</h1>
-      <Link href="/dashboard/sites/new">Create New Site</Link>
-      <ul>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Your Sites</h1>
+      <Link
+        href="/dashboard/sites/new"
+        className="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block"
+      >
+        Create New Site
+      </Link>
+      <ul className="space-y-2">
         {sites.map((site) => (
-          <li key={site.id}>
-            <Link href={`/sites/${site.id}`}>{site.name}</Link>
-            {site.isActive ? " (Active)" : " (Inactive)"}
+          <li key={site.id} className="border p-2 rounded">
+            <Link
+              href={`/dashboard/sites/${site.id}`}
+              className="text-blue-600 hover:underline"
+            >
+              {site.name}
+            </Link>
+            <span
+              className={`ml-2 ${
+                site.isActive ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              {site.isActive ? "(Active)" : "(Inactive)"}
+            </span>
           </li>
         ))}
       </ul>
