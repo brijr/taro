@@ -18,7 +18,7 @@ export default function NewSite() {
       domain,
       teamId: 1, // Replace with actual team ID
     });
-    router.push("/sites");
+    router.push("/");
   }
 
   return (

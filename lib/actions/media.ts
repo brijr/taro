@@ -1,12 +1,16 @@
-'use server'
+"use server";
 
-import { db } from '@/lib/db/drizzle';
-import { media, type NewMedia, type Media } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { db } from "@/lib/db/drizzle";
+import { media, type NewMedia, type Media } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { mediaSchema } from '@/lib/validations';
+import { mediaSchema } from "@/lib/validations";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -37,15 +41,15 @@ export async function createMedia(data: NewMedia, file: File) {
 
   // Upload the file to S3 using the signed URL
   const uploadResponse = await fetch(uploadUrl, {
-    method: 'PUT',
+    method: "PUT",
     body: file,
     headers: {
-      'Content-Type': file.type,
+      "Content-Type": file.type,
     },
   });
 
   if (!uploadResponse.ok) {
-    throw new Error('Failed to upload file to S3');
+    throw new Error("Failed to upload file to S3");
   }
 
   const validatedData = mediaSchema.parse({
@@ -58,7 +62,7 @@ export async function createMedia(data: NewMedia, file: File) {
 
   const newMedia = await db.insert(media).values(validatedData).returning();
 
-  revalidatePath(`/sites/${validatedData.siteId}/media`);
+  revalidatePath(`/${validatedData.siteId}/media`);
   return newMedia[0];
 }
 
@@ -69,18 +73,18 @@ export async function updateMedia(id: number, data: Partial<NewMedia>) {
     .set({ ...validatedData, updatedAt: new Date() })
     .where(eq(media.id, id))
     .returning();
-  revalidatePath(`/sites/${updatedMedia[0].siteId}/media`);
+  revalidatePath(`/${updatedMedia[0].siteId}/media`);
   return updatedMedia[0];
 }
 
 export async function deleteMedia(id: number) {
   const mediaItem = await getMediaItem(id);
   if (!mediaItem) {
-    throw new Error('Media item not found');
+    throw new Error("Media item not found");
   }
 
   // Delete the file from S3
-  const key = mediaItem.url.split('/').pop()!;
+  const key = mediaItem.url.split("/").pop()!;
   const deleteCommand = new DeleteObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME,
     Key: key,
@@ -91,7 +95,7 @@ export async function deleteMedia(id: number) {
     .delete(media)
     .where(eq(media.id, id))
     .returning();
-  revalidatePath(`/sites/${deletedMedia[0].siteId}/media`);
+  revalidatePath(`/${deletedMedia[0].siteId}/media`);
   return deletedMedia[0];
 }
 

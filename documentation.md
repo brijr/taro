@@ -99,10 +99,10 @@ The database schema is defined using Drizzle ORM and includes the following tabl
 
 ### Pages
 
-- `app/sites/[siteId]/post-types/new/page.tsx`: Page for creating a new post type.
-- `app/sites/[siteId]/post-types/page.tsx`: Page for listing post types of a site.
-- `app/sites/[siteId]/post-types/[postTypeId]/posts/page.tsx`: Page for listing posts of a post type.
-- `app/sites/[siteId]/post-types/[postTypeId]/posts/new.tsx`: Page for creating a new post.
+- `app/[siteId]/post-types/new/page.tsx`: Page for creating a new post type.
+- `app/[siteId]/post-types/page.tsx`: Page for listing post types of a site.
+- `app/[siteId]/post-types/[postTypeId]/posts/page.tsx`: Page for listing posts of a post type.
+- `app/[siteId]/post-types/[postTypeId]/posts/new.tsx`: Page for creating a new post.
 
 ## Environment Variables
 

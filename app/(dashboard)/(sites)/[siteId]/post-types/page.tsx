@@ -46,7 +46,7 @@ export default function PostTypes({ params }: { params: { siteId: string } }) {
                 <Button
                   onClick={() =>
                     router.push(
-                      `/sites/${params.siteId}/post-types/${postType.id}/fields`,
+                      `/${params.siteId}/post-types/${postType.id}/fields`,
                     )
                   }
                   className="ml-4"
@@ -65,7 +65,7 @@ export default function PostTypes({ params }: { params: { siteId: string } }) {
         ))}
       </ul>
       <Button
-        onClick={() => router.push(`/sites/${params.siteId}/post-types/new`)}
+        onClick={() => router.push(`/${params.siteId}/post-types/new`)}
         className="w-full"
       >
         Add New Post Type

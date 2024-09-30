@@ -32,7 +32,7 @@ export default function NewPostType({
       fields: [],
       isActive: true,
     });
-    router.push(`/sites/${params.siteId}/post-types`);
+    router.push(`/${params.siteId}/post-types`);
   }
 
   return (

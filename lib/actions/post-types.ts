@@ -1,24 +1,31 @@
-'use server'
+"use server";
 
-import { db } from '@/lib/db/drizzle';
-import { postTypes, type NewPostType, PostType } from '@/lib/db/schema';
-import { revalidatePath } from 'next/cache';
-import { postTypeSchema } from '@/lib/validations';
-import { eq, and } from 'drizzle-orm';
+import { db } from "@/lib/db/drizzle";
+import { postTypes, type NewPostType, PostType } from "@/lib/db/schema";
+import { revalidatePath } from "next/cache";
+import { postTypeSchema } from "@/lib/validations";
+import { eq, and } from "drizzle-orm";
 
 export async function getPostTypes(siteId: number): Promise<PostType[]> {
   return await db.select().from(postTypes).where(eq(postTypes.siteId, siteId));
 }
 
 export async function getPostType(id: number): Promise<PostType | null> {
-  const result = await db.select().from(postTypes).where(eq(postTypes.id, id)).limit(1);
+  const result = await db
+    .select()
+    .from(postTypes)
+    .where(eq(postTypes.id, id))
+    .limit(1);
   return result[0] || null;
 }
 
 export async function createPostType(data: NewPostType) {
   const validatedData = postTypeSchema.parse(data);
-  const newPostType = await db.insert(postTypes).values(validatedData).returning();
-  revalidatePath(`/sites/${validatedData.siteId}/post-types`);
+  const newPostType = await db
+    .insert(postTypes)
+    .values(validatedData)
+    .returning();
+  revalidatePath(`/${validatedData.siteId}/post-types`);
   return newPostType[0];
 }
 
@@ -29,7 +36,7 @@ export async function updatePostType(id: number, data: Partial<NewPostType>) {
     .set({ ...validatedData, updatedAt: new Date() })
     .where(eq(postTypes.id, id))
     .returning();
-  revalidatePath(`/sites/${updatedPostType[0].siteId}/post-types`);
+  revalidatePath(`/${updatedPostType[0].siteId}/post-types`);
   return updatedPostType[0];
 }
 
@@ -38,24 +45,27 @@ export async function deletePostType(id: number) {
     .delete(postTypes)
     .where(eq(postTypes.id, id))
     .returning();
-  revalidatePath(`/sites/${deletedPostType[0].siteId}/post-types`);
+  revalidatePath(`/${deletedPostType[0].siteId}/post-types`);
   return deletedPostType[0];
 }
 
 export async function togglePostTypeStatus(id: number) {
   const postType = await getPostType(id);
-  if (!postType) throw new Error('Post Type not found');
+  if (!postType) throw new Error("Post Type not found");
 
   const updatedPostType = await db
     .update(postTypes)
     .set({ isActive: !postType.isActive, updatedAt: new Date() })
     .where(eq(postTypes.id, id))
     .returning();
-  revalidatePath(`/sites/${updatedPostType[0].siteId}/post-types`);
+  revalidatePath(`/${updatedPostType[0].siteId}/post-types`);
   return updatedPostType[0];
 }
 
-export async function getPostTypeBySlug(siteId: number, slug: string): Promise<PostType | null> {
+export async function getPostTypeBySlug(
+  siteId: number,
+  slug: string,
+): Promise<PostType | null> {
   const result = await db
     .select()
     .from(postTypes)
@@ -64,7 +74,9 @@ export async function getPostTypeBySlug(siteId: number, slug: string): Promise<P
   return result[0] || null;
 }
 
-export async function getPostTypeWithFields(id: number): Promise<(PostType & { fields: any[] }) | null> {
+export async function getPostTypeWithFields(
+  id: number,
+): Promise<(PostType & { fields: any[] }) | null> {
   const result = await db.query.postTypes.findFirst({
     where: eq(postTypes.id, id),
     with: {
@@ -74,7 +86,9 @@ export async function getPostTypeWithFields(id: number): Promise<(PostType & { f
   return result || null;
 }
 
-export async function getPostTypesWithFields(siteId: number): Promise<(PostType & { fields: any[] })[]> {
+export async function getPostTypesWithFields(
+  siteId: number,
+): Promise<(PostType & { fields: any[] })[]> {
   const result = await db.query.postTypes.findMany({
     where: eq(postTypes.siteId, siteId),
     with: {

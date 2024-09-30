@@ -1,17 +1,24 @@
-'use server'
+"use server";
 
-import { db } from '@/lib/db/drizzle';
-import { fields, type NewField, type Field } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
-import { fieldSchema } from '@/lib/validations';
+import { db } from "@/lib/db/drizzle";
+import { fields, type NewField, type Field } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { fieldSchema } from "@/lib/validations";
 
 export async function getFields(postTypeId: number) {
-  return await db.select().from(fields).where(eq(fields.postTypeId, postTypeId));
+  return await db
+    .select()
+    .from(fields)
+    .where(eq(fields.postTypeId, postTypeId));
 }
 
 export async function getField(id: number): Promise<Field | null> {
-  const result = await db.select().from(fields).where(eq(fields.id, id)).limit(1);
+  const result = await db
+    .select()
+    .from(fields)
+    .where(eq(fields.id, id))
+    .limit(1);
   return result[0] || null;
 }
 
@@ -21,7 +28,7 @@ export async function createField(data: NewField) {
     options: data.options || {}, // Ensure options is an object
   });
   const newField = await db.insert(fields).values(validatedData).returning();
-  revalidatePath(`/sites/${validatedData.postTypeId}/post-types`);
+  revalidatePath(`/${validatedData.postTypeId}/post-types`);
   return newField[0];
 }
 
@@ -35,7 +42,7 @@ export async function updateField(id: number, data: Partial<NewField>) {
     .set({ ...validatedData, updatedAt: new Date() })
     .where(eq(fields.id, id))
     .returning();
-  revalidatePath(`/sites/${updatedField[0].postTypeId}/post-types`);
+  revalidatePath(`/${updatedField[0].postTypeId}/post-types`);
   return updatedField[0];
 }
 
@@ -44,11 +51,14 @@ export async function deleteField(id: number) {
     .delete(fields)
     .where(eq(fields.id, id))
     .returning();
-  revalidatePath(`/sites/${deletedField[0].postTypeId}/post-types`);
+  revalidatePath(`/${deletedField[0].postTypeId}/post-types`);
   return deletedField[0];
 }
 
-export async function getFieldBySlug(postTypeId: number, slug: string): Promise<Field | null> {
+export async function getFieldBySlug(
+  postTypeId: number,
+  slug: string,
+): Promise<Field | null> {
   const result = await db
     .select()
     .from(fields)
@@ -59,16 +69,19 @@ export async function getFieldBySlug(postTypeId: number, slug: string): Promise<
 
 export async function reorderFields(postTypeId: number, fieldIds: number[]) {
   const updates = fieldIds.map((id, index) =>
-    db.update(fields)
+    db
+      .update(fields)
       .set({ order: index })
-      .where(and(eq(fields.id, id), eq(fields.postTypeId, postTypeId)))
+      .where(and(eq(fields.id, id), eq(fields.postTypeId, postTypeId))),
   );
 
   await Promise.all(updates);
-  revalidatePath(`/sites/${postTypeId}/post-types`);
+  revalidatePath(`/${postTypeId}/post-types`);
 }
 
-export async function getFieldWithPostType(id: number): Promise<(Field & { postType: any }) | null> {
+export async function getFieldWithPostType(
+  id: number,
+): Promise<(Field & { postType: any }) | null> {
   const result = await db.query.fields.findFirst({
     where: eq(fields.id, id),
     with: {

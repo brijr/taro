@@ -16,7 +16,7 @@ export async function getSite(id: number): Promise<Site | null> {
 
 export async function createSite(data: NewSite) {
   const newSite = await db.insert(sites).values(data).returning();
-  revalidatePath(`/sites`);
+  revalidatePath(`/`);
   return newSite[0];
 }
 
@@ -26,7 +26,7 @@ export async function updateSite(id: number, data: Partial<NewSite>) {
     .set({ ...data, updatedAt: new Date() })
     .where(eq(sites.id, id))
     .returning();
-  revalidatePath(`/sites`);
+  revalidatePath(`/`);
   return updatedSite[0];
 }
 
@@ -53,6 +53,6 @@ export async function deleteSite(formData: FormData) {
     .delete(sites)
     .where(eq(sites.id, id))
     .returning();
-  revalidatePath(`/sites`);
+  revalidatePath(`/`);
   return deletedSite[0];
 }
