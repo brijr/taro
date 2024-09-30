@@ -6,7 +6,11 @@ import { createPostType } from "@/lib/actions/post-types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function NewPostType({ params }: { params: { siteId: string } }) {
+export default function NewPostType({
+  params,
+}: {
+  params: { siteId: string };
+}) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -28,7 +32,7 @@ export default function NewPostType({ params }: { params: { siteId: string } }) 
       fields: [],
       isActive: true,
     });
-    router.push(`/dashboard/sites/${params.siteId}/post-types`);
+    router.push(`/sites/${params.siteId}/post-types`);
   }
 
   return (
@@ -36,7 +40,10 @@ export default function NewPostType({ params }: { params: { siteId: string } }) 
       <h1 className="text-2xl font-bold mb-6">Create New Post Type</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700"
+          >
             Post Type Name
           </label>
           <Input
@@ -50,7 +57,10 @@ export default function NewPostType({ params }: { params: { siteId: string } }) 
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="slug" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="slug"
+            className="block text-sm font-medium text-gray-700"
+          >
             Slug
           </label>
           <Input
@@ -64,7 +74,10 @@ export default function NewPostType({ params }: { params: { siteId: string } }) 
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-gray-700"
+          >
             Description
           </label>
           <Input

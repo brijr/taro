@@ -41,7 +41,7 @@ TaroCMS is a flexible, scalable, and user-friendly Content Management System (CM
 - `lib/db/schema.ts`: Defines the database schema using Drizzle ORM.
 - `lib/actions/sites.ts`: Contains server-side actions for managing sites.
 - `lib/actions/post-types.ts`: Contains server-side actions for managing post types.
-- `app/dashboard/sites/[siteId]/post-types/new/page.tsx`: Page for creating a new post type.
+- `app/sites/[siteId]/post-types/new/page.tsx`: Page for creating a new post type.
 
 ## Database Schema
 
@@ -99,7 +99,7 @@ The database schema is defined using Drizzle ORM and includes the following tabl
 
 ### Pages
 
-- `app/dashboard/sites/[siteId]/post-types/new/page.tsx`: Page for creating a new post type.
+- `app/sites/[siteId]/post-types/new/page.tsx`: Page for creating a new post type.
 - `app/sites/[siteId]/post-types/page.tsx`: Page for listing post types of a site.
 - `app/sites/[siteId]/post-types/[postTypeId]/posts/page.tsx`: Page for listing posts of a post type.
 - `app/sites/[siteId]/post-types/[postTypeId]/posts/new.tsx`: Page for creating a new post.
@@ -125,23 +125,27 @@ The following environment variables are used in the project:
 ### Installation
 
 1. Clone the repository:
+
    ```sh
    git clone https://github.com/your-username/tarocms.git
    cd tarocms
    ```
 
 2. Install dependencies:
+
    ```sh
    pnpm install
    ```
 
 3. Set up environment variables:
+
    ```sh
    cp .env.example .env
    # Edit the .env file with your configuration
    ```
 
 4. Run database migrations:
+
    ```sh
    pnpm run migrate
    ```

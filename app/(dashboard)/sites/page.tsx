@@ -12,7 +12,7 @@ export default async function SitesPage() {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Your Sites</h1>
       <Link
-        href="/dashboard/sites/new"
+        href="/sites/new"
         className="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block"
       >
         Create New Site
@@ -25,7 +25,7 @@ export default async function SitesPage() {
           >
             <div>
               <Link
-                href={`/dashboard/sites/${site.id}`}
+                href={`/sites/${site.id}`}
                 className="text-blue-600 hover:underline"
               >
                 {site.name}

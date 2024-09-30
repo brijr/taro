@@ -45,7 +45,9 @@ export default function SitePage({ params }: { params: { siteId: string } }) {
               <div className="flex space-x-2">
                 <Button
                   onClick={() =>
-                    router.push(`/dashboard/sites/${params.siteId}/post-types/${postType.id}/fields`)
+                    router.push(
+                      `/sites/${params.siteId}/post-types/${postType.id}/fields`,
+                    )
                   }
                   className="ml-4"
                 >
@@ -63,9 +65,7 @@ export default function SitePage({ params }: { params: { siteId: string } }) {
         ))}
       </ul>
       <Button
-        onClick={() =>
-          router.push(`/dashboard/sites/${params.siteId}/post-types/new`)
-        }
+        onClick={() => router.push(`/sites/${params.siteId}/post-types/new`)}
         className="w-full"
       >
         Add New Post Type

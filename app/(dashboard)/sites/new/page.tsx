@@ -18,7 +18,7 @@ export default function NewSite() {
       domain,
       teamId: 1, // Replace with actual team ID
     });
-    router.push("/dashboard/sites");
+    router.push("/sites");
   }
 
   return (
@@ -26,7 +26,10 @@ export default function NewSite() {
       <h1 className="text-2xl font-bold mb-6">Create New Site</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700"
+          >
             Site Name
           </label>
           <Input
@@ -40,7 +43,10 @@ export default function NewSite() {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="domain" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="domain"
+            className="block text-sm font-medium text-gray-700"
+          >
             Domain
           </label>
           <Input
