@@ -15,8 +15,8 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const navItems = [
-    { href: "/sites", icon: Globe, label: "Sites" },
-    { href: "", icon: Users, label: "Team" },
+    { href: "/", icon: Globe, label: "Sites" },
+    { href: "/team", icon: Users, label: "Team" },
     { href: "/general", icon: Settings, label: "General" },
     { href: "/activity", icon: Activity, label: "Activity" },
     { href: "/security", icon: Shield, label: "Security" },
