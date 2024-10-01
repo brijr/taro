@@ -1,16 +1,13 @@
 "use server";
 
 import { db } from "@/lib/db/drizzle";
-import { sites, postTypes, fields } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { sites } from "@/lib/db/schema";
 
-export async function getSites(): Promise<{ id: number; name: string }[]> {
-  return await db.select({ id: sites.id, name: sites.name }).from(sites);
+export async function getSites() {
+  return await db.select().from(sites);
 }
 
-// ... other existing site-related actions
+// ... other site-related actions
 
 export async function duplicateSite(siteId: number) {
   const originalSite = await db.query.sites.findFirst({
