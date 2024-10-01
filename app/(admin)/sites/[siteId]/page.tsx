@@ -62,10 +62,10 @@ export default async function SitePage({
           <ul className="space-y-2">
             <li>
               <Link
-                href={`/sites/${siteId}/posts`}
+                href={`/sites/${siteId}/post-types`}
                 className="text-blue-600 hover:underline"
               >
-                Manage Posts
+                Manage Post Types
               </Link>
             </li>
             <li>

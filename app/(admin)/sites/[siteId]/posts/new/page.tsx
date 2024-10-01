@@ -3,7 +3,11 @@ import { createPost } from "@/lib/actions/posts";
 import { DynamicForm } from "@/components/DynamicForm";
 import { redirect } from "next/navigation";
 
-export default async function NewPostPage({ params }: { params: { siteId: string, postTypeId: string } }) {
+export default async function NewPostPage({
+  params,
+}: {
+  params: { siteId: string; postTypeId: string };
+}) {
   const siteId = parseInt(params.siteId, 10);
   const postTypeId = parseInt(params.postTypeId, 10);
   const postType = await getPostType(postTypeId);
@@ -29,7 +33,11 @@ export default async function NewPostPage({ params }: { params: { siteId: string
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-5">Create New {postType.name}</h1>
-      <DynamicForm fields={postType.fields} onSubmit={handleSubmit} siteId={siteId} />
+      <DynamicForm
+        fields={postType.fields}
+        onSubmit={handleSubmit}
+        siteId={siteId}
+      />
     </div>
   );
 }

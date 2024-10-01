@@ -11,6 +11,24 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
+export const FIELD_TYPES = [
+  { value: "text", label: "Text" },
+  { value: "number", label: "Number" },
+  { value: "date", label: "Date" },
+  { value: "boolean", label: "Boolean" },
+  { value: "textarea", label: "Textarea" },
+  { value: "select", label: "Select" },
+  { value: "radio", label: "Radio" },
+  { value: "checkbox", label: "Checkbox" },
+  { value: "file", label: "File" },
+  { value: "image", label: "Image" },
+  { value: "email", label: "Email" },
+  { value: "url", label: "URL" },
+  { value: "password", label: "Password" },
+  { value: "color", label: "Color" },
+  { value: "range", label: "Range" },
+];
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }),
@@ -260,7 +278,16 @@ export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
 export type Media = typeof media.$inferSelect;
 export type NewMedia = typeof media.$inferInsert;
-export type Field = typeof fields.$inferSelect;
+export type Field = {
+  id: number;
+  name: string;
+  slug: string;
+  postTypeId: number;
+  type: string;
+  isRequired: boolean;
+  options: string[];
+  order: number;
+};
 export type NewField = typeof fields.$inferInsert;
 export type TeamDataWithMembers = Team & {
   teamMembers: (TeamMember & {

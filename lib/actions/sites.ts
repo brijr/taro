@@ -79,3 +79,11 @@ export async function createSite(formData: FormData) {
   revalidatePath("/sites");
   redirect("/sites");
 }
+
+// Add this function if it doesn't exist
+export async function getSite(id: number) {
+  const result = await db.select().from(sites).where(eq(sites.id, id)).limit(1);
+  return result[0] || null;
+}
+
+// ... other existing functions
