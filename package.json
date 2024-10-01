@@ -45,6 +45,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "19.0.0-rc-7771d3a7-20240827",
     "react-hook-form": "^7.53.0",
+    "react-quill": "^2.0.0",
     "server-only": "^0.0.1",
     "sonner": "^1.5.0",
     "stripe": "^16.12.0",
