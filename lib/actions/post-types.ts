@@ -102,7 +102,7 @@ export async function getPostTypesWithFields(
     where: eq(postTypes.siteId, siteId),
   });
 
-  return result.map(postType => ({
+  return result.map((postType) => ({
     ...postType,
     fields: JSON.parse(postType.fields as string),
   }));
