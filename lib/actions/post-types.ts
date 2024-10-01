@@ -80,24 +80,30 @@ export async function getPostTypeBySlug(
 
 export async function getPostTypeWithFields(
   id: number
-): Promise<(PostType & { fields: any[] }) | null> {
+): Promise<PostType | null> {
   const result = await db.query.postTypes.findFirst({
     where: eq(postTypes.id, id),
-    with: {
-      fields: true,
-    },
   });
-  return result || null;
+
+  if (result) {
+    return {
+      ...result,
+      fields: JSON.parse(result.fields as string),
+    };
+  }
+
+  return null;
 }
 
 export async function getPostTypesWithFields(
   siteId: number
-): Promise<(PostType & { fields: any[] })[]> {
+): Promise<PostType[]> {
   const result = await db.query.postTypes.findMany({
     where: eq(postTypes.siteId, siteId),
-    with: {
-      fields: true,
-    },
   });
-  return result;
+
+  return result.map(postType => ({
+    ...postType,
+    fields: JSON.parse(postType.fields as string),
+  }));
 }
