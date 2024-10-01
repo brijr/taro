@@ -9,7 +9,6 @@ export function MainNav({ className }: { className?: string }) {
       <Link href="/sites" className="mr-6 font-medium">
         Sites
       </Link>
-      {/* Add more navigation items as needed */}
     </nav>
   );
 }
