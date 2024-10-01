@@ -4,6 +4,7 @@ import { db } from "@/lib/db/drizzle";
 import { sites, postTypes, fields } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function getSites(): Promise<{ id: number; name: string }[]> {
   return await db.select({ id: sites.id, name: sites.name }).from(sites);
@@ -59,4 +60,25 @@ export async function duplicateSite(siteId: number) {
 
   revalidatePath("/sites");
   return newSite;
+}
+
+export async function createSite(formData: FormData) {
+  const name = formData.get("name") as string;
+  const domain = formData.get("domain") as string;
+
+  if (!name || !domain) {
+    throw new Error("Name and domain are required");
+  }
+
+  const [newSite] = await db
+    .insert(sites)
+    .values({
+      name,
+      domain,
+      teamId: 1, // Replace with actual team ID or get it from the session
+    })
+    .returning();
+
+  revalidatePath("/sites");
+  redirect("/sites");
 }

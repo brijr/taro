@@ -13,12 +13,11 @@ export default function NewSite() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    await createSite({
-      name,
-      domain,
-      teamId: 1, // Replace with actual team ID
-    });
-    router.push("/");
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("domain", domain);
+    await createSite(formData);
+    router.push("/sites");
   }
 
   return (
