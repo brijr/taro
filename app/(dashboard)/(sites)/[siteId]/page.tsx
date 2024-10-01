@@ -12,7 +12,8 @@ export default async function SitePage({
   params: { siteId: string };
 }) {
   const siteId = parseInt(params.siteId, 10);
-  const site = await getSites(siteId);
+  const sites = await getSites();
+  const site = sites.find((s) => s.id === siteId);
 
   if (!site) {
     return <div>Site not found</div>;
