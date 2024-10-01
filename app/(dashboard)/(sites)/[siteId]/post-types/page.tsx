@@ -18,9 +18,14 @@ export default async function PostTypesPage({ params }: { params: { siteId: stri
         {postTypes.map((postType) => (
           <div key={postType.id} className="flex items-center justify-between border p-4 rounded">
             <span>{postType.name}</span>
-            <Link href={`/sites/${siteId}/post-types/${postType.id}/edit`}>
-              <Button>Edit</Button>
-            </Link>
+            <div>
+              <Link href={`/sites/${siteId}/post-types/${postType.id}/edit`}>
+                <Button variant="outline" className="mr-2">Edit</Button>
+              </Link>
+              <Link href={`/sites/${siteId}/posts/new?postTypeId=${postType.id}`}>
+                <Button>Create Post</Button>
+              </Link>
+            </div>
           </div>
         ))}
       </div>
