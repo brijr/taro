@@ -2,33 +2,35 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getPostTypes, deletePostType } from "@/lib/actions/post-types";
 import { Button } from "@/components/ui/button";
-import { PostType } from "@/lib/db/schema";
 import { getSite } from "@/lib/actions/sites";
 import { MediaUpload } from "@/components/MediaUpload";
 import { MediaGallery } from "@/components/MediaGallery";
-import { duplicateSite } from "@/lib/actions/sites";
+import { handleDuplicate } from "../actions";
 import { toast } from "sonner";
 
-export default async function SitePage({ params }: { params: { siteId: string } }) {
+export default function SitePage({ params }: { params: { siteId: string } }) {
+  const [site, setSite] = useState<any>(null);
   const siteId = parseInt(params.siteId, 10);
-  const site = await getSite(siteId);
+
+  useEffect(() => {
+    async function fetchSite() {
+      const fetchedSite = await getSite(siteId);
+      setSite(fetchedSite);
+    }
+    fetchSite();
+  }, [siteId]);
 
   if (!site) {
-    return <div>Site not found</div>;
+    return <div>Loading...</div>;
   }
 
-  const handleDuplicate = async () => {
-    "use server";
-    try {
-      const newSite = await duplicateSite(siteId);
-      toast.success(`Site duplicated: ${newSite.name}`);
-      // You might want to redirect to the new site here
-      // revalidatePath('/sites');
-    } catch (error) {
-      console.error("Error duplicating site:", error);
-      toast.error("Failed to duplicate site");
+  const onDuplicate = async () => {
+    const result = await handleDuplicate(siteId);
+    if (result.success) {
+      toast.success(`Site duplicated: ${result.name}`);
+    } else {
+      toast.error(result.error);
     }
   };
 
@@ -36,9 +38,7 @@ export default async function SitePage({ params }: { params: { siteId: string } 
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">{site.name}</h1>
-        <form action={handleDuplicate}>
-          <Button type="submit">Duplicate Site</Button>
-        </form>
+        <Button onClick={onDuplicate}>Duplicate Site</Button>
       </div>
       <h2 className="text-xl font-semibold mt-8 mb-4">Media Management</h2>
       <MediaUpload siteId={siteId} />
