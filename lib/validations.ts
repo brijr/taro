@@ -13,7 +13,7 @@ export const postTypeSchema = z.object({
   name: z.string().min(1).max(100),
   slug: z.string().min(1).max(100),
   description: z.string().optional(),
-  fields: z.array(z.unknown()),
+  fields: z.array(fieldSchema),
   isActive: z.boolean().optional(),
 });
 
@@ -27,15 +27,23 @@ export const postSchema = z.object({
   isPublished: z.boolean().optional(),
 });
 
-export const fieldSchema = z.object({
-  postTypeId: z.number(),
+const fieldSchema = z.object({
+  id: z.string(),
   name: z.string().min(1).max(100),
-  slug: z.string().min(1).max(100),
-  type: z.string().min(1).max(50),
-  isRequired: z.boolean().optional(),
-  defaultValue: z.unknown().optional(),
-  options: z.record(z.unknown()).optional(),
-  order: z.number(),
+  type: z.enum([
+    "text",
+    "textarea",
+    "number",
+    "checkbox",
+    "radio",
+    "select",
+    "date",
+    "time",
+    "color",
+    "rich-text"
+  ]),
+  required: z.boolean(),
+  options: z.array(z.string()).optional(),
 });
 
 export const mediaSchema = z.object({

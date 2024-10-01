@@ -33,7 +33,11 @@ export async function updatePostType(id: number, data: Partial<NewPostType>) {
   const validatedData = postTypeSchema.partial().parse(data);
   const updatedPostType = await db
     .update(postTypes)
-    .set({ ...validatedData, updatedAt: new Date() })
+    .set({
+      ...validatedData,
+      updatedAt: new Date(),
+      fields: JSON.stringify(data.fields) // Convert fields array to JSON string
+    })
     .where(eq(postTypes.id, id))
     .returning();
   revalidatePath(`/${updatedPostType[0].siteId}/post-types`);
