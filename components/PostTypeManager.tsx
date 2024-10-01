@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { updatePostType } from "@/lib/actions/post-types";
 import { PostType, Field, FIELD_TYPES } from "@/lib/db/schema";
 import { toast } from "sonner";
+import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
 
 export function PostTypeManager({
   postType: initialPostType,
@@ -55,6 +56,13 @@ export function PostTypeManager({
     }));
   };
 
+  const moveField = (index: number, direction: "up" | "down") => {
+    const newFields = [...postType.fields];
+    const [movedField] = newFields.splice(index, 1);
+    newFields.splice(direction === "up" ? index - 1 : index + 1, 0, movedField);
+    setPostType((prev) => ({ ...prev, fields: newFields }));
+  };
+
   const handleSave = async () => {
     try {
       await updatePostType(postType.id, {
@@ -77,11 +85,25 @@ export function PostTypeManager({
         placeholder="Post Type Name"
       />
       <ul className="space-y-4">
-        {postType.fields.map((field: Field) => (
+        {postType.fields.map((field: Field, index: number) => (
           <li
             key={field.id}
             className="flex items-center space-x-2 p-2 border rounded"
           >
+            <Button
+              onClick={() => moveField(index, "up")}
+              disabled={index === 0}
+              variant="outline"
+            >
+              <ArrowUpIcon className="h-5 w-5" />
+            </Button>
+            <Button
+              onClick={() => moveField(index, "down")}
+              disabled={index === postType.fields.length - 1}
+              variant="outline"
+            >
+              <ArrowDownIcon className="h-5 w-5" />
+            </Button>
             <Input
               value={field.name}
               onChange={(e) =>
@@ -127,8 +149,10 @@ export function PostTypeManager({
           </li>
         ))}
       </ul>
-      <Button onClick={handleAddField}>Add Field</Button>
-      <Button onClick={handleSave}>Save Post Type</Button>
+      <div className="flex justify-between gap-2">
+        <Button onClick={handleAddField}>Add Field</Button>
+        <Button onClick={handleSave}>Save Post Type</Button>
+      </div>
     </div>
   );
 }
