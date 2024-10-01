@@ -1,18 +1,27 @@
-import { getSites, deleteSite } from "@/lib/actions/sites";
+import { getSites, duplicateSite } from "@/lib/actions/sites";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Site } from "@/lib/db/schema";
+import { toast } from "sonner";
 
 export default async function SitesPage() {
-  // TODO: Replace with actual team ID from user session
-  const teamId = 1;
-  const sites = await getSites(teamId);
+  const sites = await getSites();
+
+  const handleDuplicate = async (siteId: number) => {
+    "use server";
+    try {
+      const newSite = await duplicateSite(siteId);
+      toast.success(`Site duplicated: ${newSite.name}`);
+    } catch (error) {
+      console.error("Error duplicating site:", error);
+      toast.error("Failed to duplicate site");
+    }
+  };
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Your Sites</h1>
       <Link
-        href="/new"
+        href="/sites/new"
         className="bg-primary text-primary-foreground px-4 py-2 rounded mb-4 inline-block"
       >
         Create New Site
@@ -23,27 +32,19 @@ export default async function SitesPage() {
             key={site.id}
             className="border border-border p-2 rounded flex justify-between items-center"
           >
+            <Link href={`/sites/${site.id}`} className="text-primary hover:underline">
+              {site.name}
+            </Link>
             <div>
-              <Link
-                href={`/${site.id}`}
-                className="text-primary hover:underline"
-              >
-                {site.name}
+              <form action={handleDuplicate.bind(null, site.id)} className="inline-block mr-2">
+                <Button type="submit" variant="outline">
+                  Duplicate
+                </Button>
+              </form>
+              <Link href={`/sites/${site.id}`}>
+                <Button>Manage</Button>
               </Link>
-              <span
-                className={`ml-2 ${
-                  site.isActive ? "text-muted-foreground" : "text-destructive"
-                }`}
-              >
-                {site.isActive ? "(Active)" : "(Inactive)"}
-              </span>
             </div>
-            <form action={deleteSite}>
-              <input type="hidden" name="id" value={site.id} />
-              <Button type="submit" className="ml-4">
-                Delete
-              </Button>
-            </form>
           </li>
         ))}
       </ul>
