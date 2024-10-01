@@ -130,3 +130,7 @@ export async function getSignedUploadUrl(fileName: string, fileType: string) {
   const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
   return { uploadUrl, key };
 }
+
+export async function getMediaForSite(siteId: number) {
+  return await db.select().from(media).where(eq(media.siteId, siteId));
+}
