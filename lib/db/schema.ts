@@ -219,7 +219,7 @@ export const sitesRelations = relations(sites, ({ one, many }) => ({
 
 export const postTypesRelations = relations(postTypes, ({ one, many }) => ({
   site: one(sites, { fields: [postTypes.siteId], references: [sites.id] }),
-  posts: many(posts),
+  posts: many(posts, { fields: [posts.postTypeId], references: [postTypes.id] }),
 }));
 
 export const fieldsRelations = relations(fields, ({ one }) => ({
@@ -231,6 +231,12 @@ export const fieldsRelations = relations(fields, ({ one }) => ({
 
 export const mediaRelations = relations(media, ({ one }) => ({
   site: one(sites, { fields: [media.siteId], references: [sites.id] }),
+}));
+
+// Relations
+export const postsRelations = relations(posts, ({ one }) => ({
+  postType: one(postTypes, { fields: [posts.postTypeId], references: [postTypes.id] }),
+  author: one(users, { fields: [posts.authorId], references: [users.id] }),
 }));
 
 // Types
