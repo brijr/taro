@@ -23,34 +23,31 @@ export default async function SitesPage() {
       >
         Create New Site
       </Link>
-      <ul className="space-y-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {sites.map((site) => (
-          <li
+          <div
             key={site.id}
-            className="border border-border p-2 rounded flex justify-between items-center"
+            className="border border-border p-4 rounded flex flex-col justify-between"
           >
             <Link
               href={`/sites/${site.id}`}
-              className="text-primary hover:underline"
+              className="text-primary hover:underline text-lg font-semibold mb-2"
             >
               {site.name}
             </Link>
-            <div>
-              <form
-                action={handleDuplicate.bind(null, site.id)}
-                className="inline-block mr-2"
-              >
-                <Button type="submit" variant="outline">
+            <div className="flex flex-col space-y-2">
+              <form action={handleDuplicate.bind(null, site.id)}>
+                <Button type="submit" variant="outline" className="w-full">
                   Duplicate
                 </Button>
               </form>
-              <Link href={`/sites/${site.id}`}>
-                <Button>Manage</Button>
+              <Link href={`/sites/${site.id}`} className="w-full">
+                <Button className="w-full">Manage</Button>
               </Link>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
