@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db/drizzle";
 import { media, type NewMedia, type Media } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, like } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import {
   S3Client,
@@ -20,8 +20,17 @@ const s3Client = new S3Client({
   },
 });
 
-export async function getMedia(siteId: number) {
-  return await db.select().from(media).where(eq(media.siteId, siteId));
+export async function getMedia(siteId: number, page: number = 1, search: string = "") {
+  const pageSize = 10;
+  const offset = (page - 1) * pageSize;
+
+  let query = db.select().from(media).where(eq(media.siteId, siteId));
+
+  if (search) {
+    query = query.where(like(media.fileName, `%${search}%`));
+  }
+
+  return await query.limit(pageSize).offset(offset);
 }
 
 export async function getMediaItem(id: number): Promise<Media | null> {
