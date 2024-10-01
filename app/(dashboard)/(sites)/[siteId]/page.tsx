@@ -1,14 +1,18 @@
 "use client";
 
-import { getSite } from "@/lib/actions/sites";
+import { getSites } from "@/lib/actions/sites";
 import { MediaUpload } from "@/components/MediaUpload";
 import { MediaGallery } from "@/components/MediaGallery";
 import { Button } from "@/components/ui/button";
 import { handleDuplicate } from "../actions";
 
-export default async function SitePage({ params }: { params: { siteId: string } }) {
+export default async function SitePage({
+  params,
+}: {
+  params: { siteId: string };
+}) {
   const siteId = parseInt(params.siteId, 10);
-  const site = await getSite(siteId);
+  const site = await getSites(siteId);
 
   if (!site) {
     return <div>Site not found</div>;

@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
 import { UserProvider } from "@/lib/auth";
 import { getUser } from "@/lib/db/queries";
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "TaroCMS",

@@ -32,11 +32,17 @@ export default async function SitesPage() {
             key={site.id}
             className="border border-border p-2 rounded flex justify-between items-center"
           >
-            <Link href={`/sites/${site.id}`} className="text-primary hover:underline">
+            <Link
+              href={`/sites/${site.id}`}
+              className="text-primary hover:underline"
+            >
               {site.name}
             </Link>
             <div>
-              <form action={handleDuplicate.bind(null, site.id)} className="inline-block mr-2">
+              <form
+                action={handleDuplicate.bind(null, site.id)}
+                className="inline-block mr-2"
+              >
                 <Button type="submit" variant="outline">
                   Duplicate
                 </Button>
