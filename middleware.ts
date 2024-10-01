@@ -6,7 +6,7 @@ const protectedRoutes = "";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const sessionCookie = request.cookies.get("session");
+  const sessionCookie = await request.cookies.get("session");
   const isProtectedRoute = pathname.startsWith(protectedRoutes);
 
   if (isProtectedRoute && !sessionCookie) {

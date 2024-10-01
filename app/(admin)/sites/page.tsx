@@ -1,7 +1,6 @@
 import { getSites, duplicateSite } from "@/lib/actions/sites";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
 export default async function SitesPage() {
   const sites = await getSites();
@@ -10,10 +9,8 @@ export default async function SitesPage() {
     "use server";
     try {
       const newSite = await duplicateSite(siteId);
-      toast.success(`Site duplicated: ${newSite.name}`);
     } catch (error) {
-      console.error("Error duplicating site:", error);
-      toast.error("Failed to duplicate site");
+      console.error(`Error duplicating site: ${error}`);
     }
   };
 
