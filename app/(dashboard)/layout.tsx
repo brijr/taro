@@ -1,6 +1,6 @@
-import { SiteSwitcher } from "@/components/SiteSwitcher";
-import { MainNav } from "@/components/MainNav";
-import { UserNav } from "@/components/UserNav";
+import { SiteSwitcher } from "../../components/SiteSwitcher";
+import { MainNav } from "../../components/MainNav";
+import { UserNav } from "../../components/UserNav";
 
 export default function DashboardLayout({
   children,

@@ -95,7 +95,11 @@ export function MediaSelector({ siteId, onSelect }: MediaSelectorProps) {
             ))}
           </div>
           {hasMore && (
-            <Button onClick={handleLoadMore} className="w-full" disabled={isLoading}>
+            <Button
+              onClick={handleLoadMore}
+              className="w-full"
+              disabled={isLoading}
+            >
               {isLoading ? "Loading..." : "Load More"}
             </Button>
           )}

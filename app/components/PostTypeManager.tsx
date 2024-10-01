@@ -15,7 +15,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -49,7 +53,11 @@ const fieldTypes = [
   "rich-text",
 ];
 
-export function PostTypeManager({ postType: initialPostType }: { postType: PostType }) {
+export function PostTypeManager({
+  postType: initialPostType,
+}: {
+  postType: PostType;
+}) {
   const [postType, setPostType] = useState<PostType>(initialPostType);
 
   const handleFieldChange = (id: string, key: keyof Field, value: any) => {
@@ -117,12 +125,18 @@ export function PostTypeManager({ postType: initialPostType }: { postType: PostT
       case "radio":
         return (
           <div className="mt-2">
-            <Label htmlFor={`fieldOptions-${field.id}`}>Options (comma-separated)</Label>
+            <Label htmlFor={`fieldOptions-${field.id}`}>
+              Options (comma-separated)
+            </Label>
             <Input
               id={`fieldOptions-${field.id}`}
               value={field.options?.join(", ") || ""}
               onChange={(e) =>
-                handleFieldChange(field.id, "options", e.target.value.split(",").map((s) => s.trim()))
+                handleFieldChange(
+                  field.id,
+                  "options",
+                  e.target.value.split(",").map((s) => s.trim())
+                )
               }
               placeholder="Option 1, Option 2, Option 3"
             />
@@ -142,15 +156,25 @@ export function PostTypeManager({ postType: initialPostType }: { postType: PostT
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {field.options ? format(new Date(field.options[0]), "PPP") : <span>Pick a date</span>}
+                  {field.options ? (
+                    format(new Date(field.options[0]), "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
                 <Calendar
                   mode="single"
-                  selected={field.options ? new Date(field.options[0]) : undefined}
+                  selected={
+                    field.options ? new Date(field.options[0]) : undefined
+                  }
                   onSelect={(date) =>
-                    handleFieldChange(field.id, "options", date ? [date.toISOString()] : undefined)
+                    handleFieldChange(
+                      field.id,
+                      "options",
+                      date ? [date.toISOString()] : undefined
+                    )
                   }
                   initialFocus
                 />
@@ -166,7 +190,9 @@ export function PostTypeManager({ postType: initialPostType }: { postType: PostT
               id={`fieldOptions-${field.id}`}
               type="color"
               value={field.options?.[0] || "#000000"}
-              onChange={(e) => handleFieldChange(field.id, "options", [e.target.value])}
+              onChange={(e) =>
+                handleFieldChange(field.id, "options", [e.target.value])
+              }
               className="h-10 w-full"
             />
           </div>
@@ -183,14 +209,20 @@ export function PostTypeManager({ postType: initialPostType }: { postType: PostT
         <Input
           id="postTypeName"
           value={postType.name}
-          onChange={(e) => setPostType((prev) => ({ ...prev, name: e.target.value }))}
+          onChange={(e) =>
+            setPostType((prev) => ({ ...prev, name: e.target.value }))
+          }
         />
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="fields">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="space-y-4"
+            >
               {postType.fields.map((field, index) => (
                 <Draggable key={field.id} draggableId={field.id} index={index}>
                   {(provided) => (
@@ -202,18 +234,30 @@ export function PostTypeManager({ postType: initialPostType }: { postType: PostT
                     >
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor={`fieldName-${field.id}`}>Field Name</Label>
+                          <Label htmlFor={`fieldName-${field.id}`}>
+                            Field Name
+                          </Label>
                           <Input
                             id={`fieldName-${field.id}`}
                             value={field.name}
-                            onChange={(e) => handleFieldChange(field.id, "name", e.target.value)}
+                            onChange={(e) =>
+                              handleFieldChange(
+                                field.id,
+                                "name",
+                                e.target.value
+                              )
+                            }
                           />
                         </div>
                         <div>
-                          <Label htmlFor={`fieldType-${field.id}`}>Field Type</Label>
+                          <Label htmlFor={`fieldType-${field.id}`}>
+                            Field Type
+                          </Label>
                           <Select
                             value={field.type}
-                            onValueChange={(value) => handleFieldChange(field.id, "type", value)}
+                            onValueChange={(value) =>
+                              handleFieldChange(field.id, "type", value)
+                            }
                           >
                             <SelectTrigger id={`fieldType-${field.id}`}>
                               <SelectValue>{field.type}</SelectValue>
@@ -233,9 +277,14 @@ export function PostTypeManager({ postType: initialPostType }: { postType: PostT
                         <Switch
                           id={`fieldRequired-${field.id}`}
                           checked={field.required}
-                          onCheckedChange={(checked) => handleFieldChange(field.id, "required", checked)}
+                          onCheckedChange={(checked) =>
+                            handleFieldChange(field.id, "required", checked)
+                          }
                         />
-                        <Label htmlFor={`fieldRequired-${field.id}`} className="ml-2">
+                        <Label
+                          htmlFor={`fieldRequired-${field.id}`}
+                          className="ml-2"
+                        >
                           Required
                         </Label>
                       </div>

@@ -34,7 +34,7 @@ export function SiteSwitcher({ currentSiteId }: { currentSiteId?: number }) {
     const fetchSites = async () => {
       const fetchedSites = await getSites();
       setSites(fetchedSites);
-      const current = fetchedSites.find(site => site.id === currentSiteId);
+      const current = fetchedSites.find((site) => site.id === currentSiteId);
       if (current) {
         setSelectedSite(current);
       }

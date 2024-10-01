@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +9,6 @@ import { toast } from "sonner";
 
 export function MediaUpload({ siteId }: { siteId: number }) {
   const [file, setFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -16,7 +17,6 @@ export function MediaUpload({ siteId }: { siteId: number }) {
   };
 
   async function handleUpload(formData: FormData) {
-    setUploading(true);
     const file = formData.get("file") as File;
     const altText = formData.get("altText") as string;
     if (!file) return;
@@ -38,25 +38,20 @@ export function MediaUpload({ siteId }: { siteId: number }) {
 
       const url = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
 
-      await createMedia(
-        {
-          siteId,
-          fileName: file.name,
-          fileType: file.type,
-          fileSize: file.size,
-          url,
-          altText,
-        },
-        file
-      );
+      await createMedia({
+        siteId,
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        url,
+        altText,
+      });
 
       toast.success("File uploaded successfully");
       setFile(null);
     } catch (error) {
       console.error("Error uploading file:", error);
       toast.error("Failed to upload file");
-    } finally {
-      setUploading(false);
     }
   }
 
@@ -75,8 +70,8 @@ export function MediaUpload({ siteId }: { siteId: number }) {
           placeholder="Describe the image"
         />
       </div>
-      <Button type="submit" disabled={!file || uploading}>
-        {uploading ? "Uploading..." : "Upload"}
+      <Button type="submit" disabled={!file}>
+        Upload
       </Button>
     </form>
   );

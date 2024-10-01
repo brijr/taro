@@ -1,10 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { getPostTypes, deletePostType } from "@/lib/actions/post-types";
+import { getPostTypes } from "@/lib/actions/post-types";
 import { Button } from "@/components/ui/button";
-import { PostType } from "@/lib/db/schema";
 import Link from "next/link";
 
 export default async function PostTypesPage({ params }: { params: { siteId: string } }) {
