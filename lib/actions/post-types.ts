@@ -3,7 +3,7 @@
 import { db } from "@/lib/db/drizzle";
 import { postTypes, type NewPostType, PostType } from "@/lib/db/schema";
 import { revalidatePath } from "next/cache";
-import { postTypeSchema } from "@/lib/validations";
+import { postTypeSchema, fieldSchema } from "@/lib/validations";
 import { eq, and } from "drizzle-orm";
 
 export async function getPostTypes(siteId: number): Promise<PostType[]> {
