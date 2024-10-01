@@ -1,15 +1,24 @@
 "use server";
 
 import { db } from "@/lib/db/drizzle";
-import { sites } from "@/lib/db/schema";
+import {
+  sites,
+  postTypes,
+  fields,
+  type Site,
+  type PostType,
+  type Field,
+} from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth/session"; // Assuming you have a session management utility
 
-export async function getSites() {
+export async function getSites(): Promise<Site[]> {
   return await db.select().from(sites);
 }
 
-// ... other site-related actions
-
-export async function duplicateSite(siteId: number) {
+export async function duplicateSite(siteId: number): Promise<Site> {
   const originalSite = await db.query.sites.findFirst({
     where: eq(sites.id, siteId),
     with: {
@@ -25,7 +34,7 @@ export async function duplicateSite(siteId: number) {
     throw new Error("Site not found");
   }
 
-  const { id, createdAt, updatedAt, ...siteData } = originalSite;
+  const { id, createdAt, updatedAt, postTypes, ...siteData } = originalSite;
   const newSiteName = `${siteData.name} (Copy)`;
 
   const [newSite] = await db
@@ -36,30 +45,39 @@ export async function duplicateSite(siteId: number) {
     })
     .returning();
 
-  for (const postType of originalSite.postTypes) {
-    const { id: postTypeId, siteId: _, ...postTypeData } = postType;
-    const [newPostType] = await db
-      .insert(postTypes)
-      .values({
-        ...postTypeData,
-        siteId: newSite.id,
-      })
-      .returning();
+  await Promise.all(
+    postTypes.map(async (postType: PostType) => {
+      const {
+        id: postTypeId,
+        siteId: _,
+        fields: originalFields,
+        ...postTypeData
+      } = postType;
+      const [newPostType] = await db
+        .insert(postTypes)
+        .values({
+          ...postTypeData,
+          siteId: newSite.id,
+        })
+        .returning();
 
-    for (const field of postType.fields) {
-      const { id: fieldId, postTypeId: __, ...fieldData } = field;
-      await db.insert(fields).values({
-        ...fieldData,
-        postTypeId: newPostType.id,
-      });
-    }
-  }
+      await Promise.all(
+        originalFields.map(async (field: Field) => {
+          const { id: fieldId, postTypeId: __, ...fieldData } = field;
+          await db.insert(fields).values({
+            ...fieldData,
+            postTypeId: newPostType.id,
+          });
+        })
+      );
+    })
+  );
 
   revalidatePath("/sites");
   return newSite;
 }
 
-export async function createSite(formData: FormData) {
+export async function createSite(formData: FormData): Promise<void> {
   const name = formData.get("name") as string;
   const domain = formData.get("domain") as string;
 
@@ -67,12 +85,19 @@ export async function createSite(formData: FormData) {
     throw new Error("Name and domain are required");
   }
 
+  const session = await getSession();
+  const teamId = session?.teamId; // Replace with actual team ID from the session
+
+  if (!teamId) {
+    throw new Error("Team ID is required");
+  }
+
   const [newSite] = await db
     .insert(sites)
     .values({
       name,
       domain,
-      teamId: 1, // Replace with actual team ID or get it from the session
+      teamId,
     })
     .returning();
 
@@ -81,9 +106,7 @@ export async function createSite(formData: FormData) {
 }
 
 // Add this function if it doesn't exist
-export async function getSite(id: number) {
+export async function getSite(id: number): Promise<Site | null> {
   const result = await db.select().from(sites).where(eq(sites.id, id)).limit(1);
   return result[0] || null;
 }
-
-// ... other existing functions

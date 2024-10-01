@@ -5,9 +5,10 @@ import { getSite } from "@/lib/actions/sites";
 export default async function SiteMediaPage({
   params,
 }: {
-  params: { siteId: string };
+  params: Promise<{ siteId: string }>;
 }) {
-  const siteId = parseInt(params.siteId, 10);
+  const resolvedParams = await params;
+  const siteId = parseInt(resolvedParams.siteId, 10);
   const site = await getSite(siteId);
 
   if (!site) {

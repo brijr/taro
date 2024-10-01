@@ -237,7 +237,9 @@ export const sitesRelations = relations(sites, ({ one, many }) => ({
 
 export const postTypesRelations = relations(postTypes, ({ one, many }) => ({
   site: one(sites, { fields: [postTypes.siteId], references: [sites.id] }),
-  posts: many(posts, { fields: [posts.postTypeId], references: [postTypes.id] }),
+  posts: many(posts, {
+    relationName: "posts",
+  }),
 }));
 
 export const fieldsRelations = relations(fields, ({ one }) => ({
@@ -253,7 +255,10 @@ export const mediaRelations = relations(media, ({ one }) => ({
 
 // Relations
 export const postsRelations = relations(posts, ({ one }) => ({
-  postType: one(postTypes, { fields: [posts.postTypeId], references: [postTypes.id] }),
+  postType: one(postTypes, {
+    fields: [posts.postTypeId],
+    references: [postTypes.id],
+  }),
   author: one(users, { fields: [posts.authorId], references: [users.id] }),
 }));
 
@@ -271,7 +276,7 @@ export type NewInvitation = typeof invitations.$inferInsert;
 export type Site = typeof sites.$inferSelect;
 export type NewSite = typeof sites.$inferInsert;
 export type PostType = typeof postTypes.$inferSelect & {
-  fields: any; // or a more specific type
+  fields: Field[]; // Ensure fields is an array of Field type
 };
 export type NewPostType = typeof postTypes.$inferInsert;
 export type Post = typeof posts.$inferSelect;
