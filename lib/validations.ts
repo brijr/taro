@@ -27,7 +27,7 @@ export const postSchema = z.object({
   isPublished: z.boolean().optional(),
 });
 
-const fieldSchema = z.object({
+export const fieldSchema = z.object({
   id: z.string(),
   name: z.string().min(1).max(100),
   type: z.enum([

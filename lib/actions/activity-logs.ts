@@ -1,12 +1,19 @@
-'use server'
+"use server";
 
-import { db } from '@/lib/db/drizzle';
-import { activityLogs, type NewActivityLog, ActivityType } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { db } from "@/lib/db/drizzle";
+import {
+  activityLogs,
+  type NewActivityLog,
+  ActivityType,
+} from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function getActivityLogs(teamId: number) {
-  return await db.select().from(activityLogs).where(eq(activityLogs.teamId, teamId));
+  return await db
+    .select()
+    .from(activityLogs)
+    .where(eq(activityLogs.teamId, teamId));
 }
 
 export async function createActivityLog(data: NewActivityLog) {
@@ -15,7 +22,12 @@ export async function createActivityLog(data: NewActivityLog) {
   return newLog[0];
 }
 
-export async function logActivity(teamId: number, userId: number | null, action: ActivityType, ipAddress?: string) {
+export async function logActivity(
+  teamId: number,
+  userId: number | null,
+  action: ActivityType,
+  ipAddress?: string
+) {
   return await createActivityLog({
     teamId,
     userId,

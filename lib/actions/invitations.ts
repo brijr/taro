@@ -1,16 +1,23 @@
-'use server'
+"use server";
 
-import { db } from '@/lib/db/drizzle';
-import { invitations, type NewInvitation } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
+import { db } from "@/lib/db/drizzle";
+import { invitations, type NewInvitation } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function getInvitations(teamId: number) {
-  return await db.select().from(invitations).where(eq(invitations.teamId, teamId));
+  return await db
+    .select()
+    .from(invitations)
+    .where(eq(invitations.teamId, teamId));
 }
 
 export async function getInvitation(id: number) {
-  const result = await db.select().from(invitations).where(eq(invitations.id, id)).limit(1);
+  const result = await db
+    .select()
+    .from(invitations)
+    .where(eq(invitations.id, id))
+    .limit(1);
   return result[0] || null;
 }
 
@@ -20,7 +27,10 @@ export async function createInvitation(data: NewInvitation) {
   return newInvitation[0];
 }
 
-export async function updateInvitation(id: number, data: Partial<NewInvitation>) {
+export async function updateInvitation(
+  id: number,
+  data: Partial<NewInvitation>
+) {
   const updatedInvitation = await db
     .update(invitations)
     .set(data)

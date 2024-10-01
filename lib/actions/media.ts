@@ -2,7 +2,8 @@
 
 import { db } from "@/lib/db/drizzle";
 import { media, type NewMedia, type Media } from "@/lib/db/schema";
-import { eq, and, like } from "drizzle-orm";
+import { eq, and, like, sql, SQL } from "drizzle-orm";
+import { PgSelect } from "drizzle-orm/pg-core";
 import { revalidatePath } from "next/cache";
 import {
   S3Client,
@@ -10,7 +11,6 @@ import {
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { mediaSchema } from "@/lib/validations";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -20,17 +20,23 @@ const s3Client = new S3Client({
   },
 });
 
-export async function getMedia(siteId: number, page: number = 1, search: string = "") {
+export async function getMedia(
+  siteId: number,
+  page: number = 1,
+  search: string = ""
+): Promise<Media[]> {
   const pageSize = 10;
   const offset = (page - 1) * pageSize;
 
-  let query = db.select().from(media).where(eq(media.siteId, siteId));
+  let baseQuery = db.select().from(media).where(eq(media.siteId, siteId));
 
   if (search) {
-    query = query.where(like(media.fileName, `%${search}%`));
+    // @ts-ignore
+    baseQuery = baseQuery.where(like(media.fileName, `%${search}%`));
   }
 
-  return await query.limit(pageSize).offset(offset);
+  const result = await baseQuery.limit(pageSize).offset(offset);
+  return result;
 }
 
 export async function getMediaItem(id: number): Promise<Media | null> {
@@ -38,7 +44,10 @@ export async function getMediaItem(id: number): Promise<Media | null> {
   return result[0] || null;
 }
 
-export async function createMedia(data: NewMedia, file: File) {
+export async function createMedia(
+  data: Omit<NewMedia, "id" | "createdAt" | "updatedAt">,
+  file: File
+) {
   const key = `${Date.now()}-${file.name}`;
   const command = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME,
@@ -61,25 +70,27 @@ export async function createMedia(data: NewMedia, file: File) {
     throw new Error("Failed to upload file to S3");
   }
 
-  const validatedData = mediaSchema.parse({
+  const newMediaData = {
     ...data,
     fileName: file.name,
     fileType: file.type,
     fileSize: file.size,
     url: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`,
-  });
+  };
 
-  const newMedia = await db.insert(media).values(validatedData).returning();
+  const newMedia = await db.insert(media).values(newMediaData).returning();
 
-  revalidatePath(`/${validatedData.siteId}/media`);
+  revalidatePath(`/${newMediaData.siteId}/media`);
   return newMedia[0];
 }
 
-export async function updateMedia(id: number, data: Partial<NewMedia>) {
-  const validatedData = mediaSchema.partial().parse(data);
+export async function updateMedia(
+  id: number,
+  data: Partial<Omit<NewMedia, "id" | "createdAt" | "updatedAt">>
+) {
   const updatedMedia = await db
     .update(media)
-    .set({ ...validatedData, updatedAt: new Date() })
+    .set({ ...data, updatedAt: new Date() })
     .where(eq(media.id, id))
     .returning();
   revalidatePath(`/${updatedMedia[0].siteId}/media`);

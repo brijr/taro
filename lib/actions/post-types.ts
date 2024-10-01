@@ -36,7 +36,7 @@ export async function updatePostType(id: number, data: Partial<NewPostType>) {
     .set({
       ...validatedData,
       updatedAt: new Date(),
-      fields: JSON.stringify(data.fields) // Convert fields array to JSON string
+      fields: JSON.stringify(data.fields), // Convert fields array to JSON string
     })
     .where(eq(postTypes.id, id))
     .returning();
@@ -68,7 +68,7 @@ export async function togglePostTypeStatus(id: number) {
 
 export async function getPostTypeBySlug(
   siteId: number,
-  slug: string,
+  slug: string
 ): Promise<PostType | null> {
   const result = await db
     .select()
@@ -79,7 +79,7 @@ export async function getPostTypeBySlug(
 }
 
 export async function getPostTypeWithFields(
-  id: number,
+  id: number
 ): Promise<(PostType & { fields: any[] }) | null> {
   const result = await db.query.postTypes.findFirst({
     where: eq(postTypes.id, id),
@@ -91,7 +91,7 @@ export async function getPostTypeWithFields(
 }
 
 export async function getPostTypesWithFields(
-  siteId: number,
+  siteId: number
 ): Promise<(PostType & { fields: any[] })[]> {
   const result = await db.query.postTypes.findMany({
     where: eq(postTypes.siteId, siteId),

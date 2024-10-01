@@ -2,9 +2,20 @@
 
 import { db } from "@/lib/db/drizzle";
 import { fields, type NewField, type Field } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { fieldSchema } from "@/lib/validations";
+import { z } from "zod"; // Make sure to import zod if not already imported
+
+// Update the fieldSchema definition to match the database schema
+export const fieldSchema = z.object({
+  name: z.string(),
+  slug: z.string(),
+  postTypeId: z.number(),
+  type: z.string(),
+  isRequired: z.boolean(),
+  options: z.array(z.string()).optional(),
+  order: z.number(),
+});
 
 export async function getFields(postTypeId: number) {
   return await db
@@ -22,27 +33,46 @@ export async function getField(id: number): Promise<Field | null> {
   return result[0] || null;
 }
 
-export async function createField(data: NewField) {
-  const validatedData = fieldSchema.parse({
+export async function createField(
+  data: Omit<NewField, "id" | "createdAt" | "updatedAt">
+) {
+  const order = await getNextOrder(data.postTypeId);
+  const newFieldData = {
     ...data,
-    options: data.options || {}, // Ensure options is an object
-  });
+    slug: data.name.toLowerCase().replace(/\s+/g, "-"),
+    order,
+  };
+  const validatedData = fieldSchema.parse(newFieldData);
+
   const newField = await db.insert(fields).values(validatedData).returning();
   revalidatePath(`/${validatedData.postTypeId}/post-types`);
   return newField[0];
 }
 
-export async function updateField(id: number, data: Partial<NewField>) {
-  const validatedData = fieldSchema.partial().parse({
+export async function updateField(
+  id: number,
+  data: Partial<Omit<NewField, "id" | "createdAt" | "updatedAt">>
+) {
+  const existingField = await getField(id);
+  if (!existingField) throw new Error("Field not found");
+
+  const updateData = {
     ...data,
-    options: data.options || {}, // Ensure options is an object
-  });
+    ...(data.name && { slug: data.name.toLowerCase().replace(/\s+/g, "-") }),
+  };
+
+  const validatedData = fieldSchema.partial().parse(updateData);
+
   const updatedField = await db
     .update(fields)
-    .set({ ...validatedData, updatedAt: new Date() })
+    .set({
+      ...validatedData,
+      updatedAt: new Date(),
+    })
     .where(eq(fields.id, id))
     .returning();
-  revalidatePath(`/${updatedField[0].postTypeId}/post-types`);
+
+  revalidatePath(`/${existingField.postTypeId}/post-types`);
   return updatedField[0];
 }
 
@@ -57,7 +87,7 @@ export async function deleteField(id: number) {
 
 export async function getFieldBySlug(
   postTypeId: number,
-  slug: string,
+  slug: string
 ): Promise<Field | null> {
   const result = await db
     .select()
@@ -72,7 +102,7 @@ export async function reorderFields(postTypeId: number, fieldIds: number[]) {
     db
       .update(fields)
       .set({ order: index })
-      .where(and(eq(fields.id, id), eq(fields.postTypeId, postTypeId))),
+      .where(and(eq(fields.id, id), eq(fields.postTypeId, postTypeId)))
   );
 
   await Promise.all(updates);
@@ -80,7 +110,7 @@ export async function reorderFields(postTypeId: number, fieldIds: number[]) {
 }
 
 export async function getFieldWithPostType(
-  id: number,
+  id: number
 ): Promise<(Field & { postType: any }) | null> {
   const result = await db.query.fields.findFirst({
     where: eq(fields.id, id),
@@ -89,4 +119,13 @@ export async function getFieldWithPostType(
     },
   });
   return result || null;
+}
+
+// Add this helper function at the end of the file
+async function getNextOrder(postTypeId: number): Promise<number> {
+  const result = await db
+    .select({ maxOrder: sql<number>`COALESCE(MAX(${fields.order}), 0)` })
+    .from(fields)
+    .where(eq(fields.postTypeId, postTypeId));
+  return (result[0]?.maxOrder ?? 0) + 1;
 }

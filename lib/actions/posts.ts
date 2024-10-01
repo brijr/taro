@@ -64,7 +64,7 @@ export async function unpublishPost(id: number) {
 
 export async function getPostBySlug(
   postTypeId: number,
-  slug: string,
+  slug: string
 ): Promise<Post | null> {
   const result = await db
     .select()

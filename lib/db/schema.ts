@@ -154,29 +154,18 @@ export const media = pgTable("media", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const fields = pgTable(
-  "fields",
-  {
-    id: serial("id").primaryKey(),
-    postTypeId: integer("post_type_id")
-      .notNull()
-      .references(() => postTypes.id),
-    name: varchar("name", { length: 100 }).notNull(),
-    slug: varchar("slug", { length: 100 }).notNull(),
-    type: varchar("type", { length: 50 }).notNull(),
-    isRequired: boolean("is_required").notNull().default(false),
-    defaultValue: jsonb("default_value"),
-    options: jsonb("options"),
-    order: integer("order").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  },
-  (table) => {
-    return {
-      slugIdx: uniqueIndex("field_slug_idx").on(table.postTypeId, table.slug),
-    };
-  }
-);
+export const fields = pgTable("fields", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull(),
+  postTypeId: integer("post_type_id").notNull(),
+  type: text("type").notNull(),
+  isRequired: boolean("is_required").notNull().default(false),
+  options: text("options").array(),
+  order: integer("order").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
 
 // Relations
 export const teamsRelations = relations(teams, ({ many }) => ({

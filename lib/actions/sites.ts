@@ -30,17 +30,23 @@ export async function duplicateSite(siteId: number) {
   const { id, createdAt, updatedAt, ...siteData } = originalSite;
   const newSiteName = `${siteData.name} (Copy)`;
 
-  const [newSite] = await db.insert(sites).values({
-    ...siteData,
-    name: newSiteName,
-  }).returning();
+  const [newSite] = await db
+    .insert(sites)
+    .values({
+      ...siteData,
+      name: newSiteName,
+    })
+    .returning();
 
   for (const postType of originalSite.postTypes) {
     const { id: postTypeId, siteId: _, ...postTypeData } = postType;
-    const [newPostType] = await db.insert(postTypes).values({
-      ...postTypeData,
-      siteId: newSite.id,
-    }).returning();
+    const [newPostType] = await db
+      .insert(postTypes)
+      .values({
+        ...postTypeData,
+        siteId: newSite.id,
+      })
+      .returning();
 
     for (const field of postType.fields) {
       const { id: fieldId, postTypeId: __, ...fieldData } = field;
@@ -51,6 +57,6 @@ export async function duplicateSite(siteId: number) {
     }
   }
 
-  revalidatePath('/sites');
+  revalidatePath("/sites");
   return newSite;
 }
