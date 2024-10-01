@@ -7,12 +7,22 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { RichTextEditor } from "./RichTextEditor";
 import { MediaSelector } from "./MediaSelector";
 import { toast } from "sonner";
@@ -79,7 +89,9 @@ export function DynamicForm({ fields, onSubmit, siteId }: DynamicFormProps) {
           <Checkbox
             id={field.id}
             checked={formData[field.name] || false}
-            onCheckedChange={(checked) => handleInputChange(field.name, checked)}
+            onCheckedChange={(checked) =>
+              handleInputChange(field.name, checked)
+            }
             required={field.required}
           />
         );
@@ -127,7 +139,11 @@ export function DynamicForm({ fields, onSubmit, siteId }: DynamicFormProps) {
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {formData[field.name] ? format(formData[field.name], "PPP") : <span>Pick a date</span>}
+                {formData[field.name] ? (
+                  format(formData[field.name], "PPP")
+                ) : (
+                  <span>Pick a date</span>
+                )}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">

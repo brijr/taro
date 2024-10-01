@@ -38,14 +38,17 @@ export function MediaUpload({ siteId }: { siteId: number }) {
 
       const url = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
 
-      await createMedia({
-        siteId,
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-        url,
-        altText,
-      });
+      await createMedia(
+        {
+          siteId,
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          url,
+          altText,
+        },
+        file
+      );
 
       toast.success("File uploaded successfully");
       setFile(null);
